@@ -31,8 +31,7 @@ exports.configure = function (done) {
 					}
 				});
 				done(null);
-			}
-			
+			}			
 		});
 	} catch (error) {
 		done(error);
