@@ -4,7 +4,6 @@
   "description": "angular TDD starter",
   "main": "server.js",
   "scripts": {
-    "pretest": "tsc -p ./",
     "test": "gulp mocha"
   },
   "repository": {
@@ -26,6 +25,7 @@
     "gulp-load-plugins": "^1.1.0",
     "gulp-mocha": "^2.2.0",
     "gulp-nodemon": "^2.0.4",
+    "gulp-sourcemaps": "^1.6.0",
     "gulp-webpack": "^1.5.0",
     "karma": "^0.13.15",
     "mocha": "^2.3.4",
@@ -36,9 +36,21 @@
     "supertest": "^1.1.0"
   },
   "dependencies": {
+    "async": "^1.5.0",
+    "body-parser": "^1.14.1",
+    "cookie-parser": "^1.4.0",
     "express": "^4.13.3",
+    "express-session": "^1.12.1",
+    "gulp-typescript": "^2.9.2",
+    "jade": "^1.11.0",
     "lodash": "^3.10.1",
+    "method-override": "^2.3.5",
+    "mongoose": "^4.2.6",
+    "morgan": "^1.6.1",
+    "nconf": "^0.8.2",
+    "passport": "^0.3.2",
     "typescript": "^1.6.2",
-    "webpack": "^1.12.6"
+    "webpack": "^1.12.6",
+    "webpack-dev-middleware": "^1.2.0"
   }
 }
