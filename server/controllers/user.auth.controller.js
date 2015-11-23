@@ -12,7 +12,7 @@ module.exports = function (mockuser, jwt) {
         User = mockuser;
     }
     if (!jwt) {
-        tokenHelper = require("../middleware/jwtTokenHelper");
+        tokenHelper = require("../utils/jwt.helper");
     } else {
         tokenHelper = jwt;
     }

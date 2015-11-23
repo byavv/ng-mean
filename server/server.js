@@ -18,7 +18,7 @@ var async = require("async"),
 
 async.waterfall([
   (done) => {
-    config.configure().for(env, (err) => {
+    config.configure.for(env, (err) => {
       return done(err);
     });
   },

@@ -11,7 +11,7 @@ describe("User model methods & validation tests", () => {
 	var User;
 	var user;
 	before((done) => {
-		config.configure().for("test", (err) => {
+		config.configure.for("test", (err) => {
 			if (err) {
 				console.error("Error config: " + err);
 				done(err);
@@ -25,7 +25,7 @@ describe("User model methods & validation tests", () => {
 					done();
 				})
 			}
-		})
+		}) 
 	})
 	before((done) => {
 		user = new User();
@@ -37,7 +37,7 @@ describe("User model methods & validation tests", () => {
 			User.remove({}).exec();
 		})
 
-		it('should begin with clean db', (done) => {
+		it('Should begin with clean db', (done) => {
 			User.find({}, (err, users) => {
 				users.should.have.length(0);
 				done();
@@ -75,7 +75,7 @@ describe("User model methods & validation tests", () => {
 			})
 		});
 		
-		describe("Validation", () => {
+		describe("User Validation", () => {
 			describe("Username", () => {
 				it("Should fail saving and fire validation error with empty username when local provider", (done) => {
 					user = new User({

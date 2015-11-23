@@ -22,26 +22,24 @@ describe("User authentication controller unit tests", () => {
 	var controller;
 	var user_to_find;
 	before((done) => {
-		config.configure().for("test", (err) => {
+		config.configure.for("test", (err) => {
 			if (err) {
 				console.error("Error config: " + err);
 				done(err);
 			} else {				
-				//finded user mock
+				//user finded in db mock
 				user_to_find = {
 					authenticate: sinon.stub().returns(true)
 				}
-
 				findOneStub = sinon.stub().yields(null, user_to_find);
 				saveStub = sinon.stub().yields(null, { _id: "0254879456" });
-				//mongoose User mock
-				User = function () {
-
-				}
-				User.findOne = findOneStub
+				
+				//mongoose User model mock
+				User = function () { };
+				User.findOne = findOneStub;
 				User.prototype.save = saveStub;
 				
-				//jwt middleware mock
+				//jwt util mock
 				JwtTokenHelper = function () {
 					this.create = function (user, cb) {
 						cb(null, {
@@ -68,9 +66,9 @@ describe("User authentication controller unit tests", () => {
 		app = express();
 		expressConf(app);
 		app.use("/me", (req, res, next) => {
-					req.user = {roles:["user"]} 
-					next();
-				});
+			req.user = { roles: ["user"] }
+			next();
+		});
 		//fake routes
 		app.post('/signup', controller.signup);
 		app.post('/signout', controller.signout);
@@ -210,10 +208,10 @@ describe("User authentication controller unit tests", () => {
 			});
 		})
 		describe("Check user auth ", () => {
-			it("Should check authorization success", (done) => {				
+			it("Should check authorization success", (done) => {
 				request(app)
 					.post('/me')
-					.send({roles:["user"]})
+					.send({ roles: ["user"] })
 					.expect(200)
 					.end((err, res) => {
 						expect(res.status).to.be.equal(200);
@@ -222,14 +220,14 @@ describe("User authentication controller unit tests", () => {
 						done();
 					});
 			});
-			it("Should check authorization fail (check if user admin)", (done) => {				
+			it("Should check authorization fail (check if user admin)", (done) => {
 				request(app)
 					.post('/me')
-					.send({roles:["user", "admin"]})//if user has these roles, should pass, but it don't
+					.send({ roles: ["user", "admin"] })//if user has these roles, should pass, but it don't
 					.expect(401)
 					.end((err, res) => {
 						expect(res.status).to.be.equal(401);
-						done(); 
+						done();
 					});
 			});
 		})

@@ -1,4 +1,4 @@
-exports.defaultConf = {
+module.exports = {
 	appName: 'MEAN starter',
 	github: {
 		clientID: 'ff63d88db28d7788461a',
@@ -6,7 +6,7 @@ exports.defaultConf = {
 		callbackURL: '/auth/github/callback'
 	},
 	jwtAuth: {
-		access_expiration_time: 10,
+		access_expiration_time: 3600,
 		refresh_expiration_time: 360000,
 		secret: "my super secret word"
 	},
