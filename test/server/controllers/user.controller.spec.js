@@ -17,32 +17,30 @@ describe("User authentication controller unit tests", () => {
 	var app;
 	var User;
 	var JwtTokenHelper;
-	var stubUser;
+	var findOneStub, saveStub;
 	var stubJwtHelper;
 	var controller;
 	var user_to_find;
 	before((done) => {
-		console.log("I called in unit tests")
 		config.configure().for("test", (err) => {
 			if (err) {
 				console.error("Error config: " + err);
 				done(err);
-			} else {
+			} else {				
 				//finded user mock
 				user_to_find = {
-					authenticate: () => {
-						return true;
-					}
+					authenticate: sinon.stub().returns(true)
 				}
+
+				findOneStub = sinon.stub().yields(null, user_to_find);
+				saveStub = sinon.stub().yields(null, { _id: "0254879456" });
 				//mongoose User mock
 				User = function () {
-					this.save = function (cb) {
-						cb(null, { _id: 123456 });
-					}
-					this.findOne = function (request, cb) {
-						cb(null, { _id: 123456 });
-					}
+
 				}
+				User.findOne = findOneStub
+				User.prototype.save = saveStub;
+				
 				//jwt middleware mock
 				JwtTokenHelper = function () {
 					this.create = function (user, cb) {
@@ -52,17 +50,16 @@ describe("User authentication controller unit tests", () => {
 							token: "fakeToken"
 						});
 					}
+					this.revoke = function (user, cb) {
+						cb(null);
+					}
 				}
-				//stub user and tokenHelper				
-				stubUser = sinon.stub(new User());
+
 				stubJwtHelper = sinon.stub(new JwtTokenHelper());
-
-				stubUser.findOne.yields(null, user_to_find);
-				stubUser.save.yields(null, { _id: "0254879456" });
-
 				stubJwtHelper.create.yields(null, { token: "0254879456" });
+				stubJwtHelper.revoke.yields(null);
 
-				controller = require("../../../server/controllers/user.auth.controller")(stubUser, stubJwtHelper);
+				controller = require("../../../server/controllers/user.auth.controller")(User, stubJwtHelper);
 				done();
 			}
 		})
@@ -70,92 +67,172 @@ describe("User authentication controller unit tests", () => {
 	before(() => {
 		app = express();
 		expressConf(app);
+		app.use("/me", (req, res, next) => {
+					req.user = {roles:["user"]} 
+					next();
+				});
 		//fake routes
 		app.post('/signup', controller.signup);
 		app.post('/signout', controller.signout);
 		app.post('/signin', controller.signin);
+		app.post('/me', controller.me);
 	});
 
-	describe("User authentication controller tests", () => {		
-		it("Should signin without problems", (done) => {
-			var user_to_signin = { username: 'marcus', password: '123456789' };
-			request(app)
-				.post('/signin')
-				.send(user_to_signin)
-				.expect(200)
-				.end((err, res) => {
-					if(err) throw err;
-					expect(res.status).to.be.equal(200);	
-					assert(stubUser.findOne.calledOnce);
-					assert(stubJwtHelper.create.calledOnce);					
-					expect(res.body).to.have.property('token');
-					expect(res.body.token).to.be.equal("0254879456");
-					done();
-				});
-		})
-		it("Should fail sign in with no password", (done) => {
-			var user_to_signin = { username: 'marcus' };
-			request(app)
-				.post('/signin')
-				.send(user_to_signin)
-				.expect(500)
-				.end((err, res) => {
-					if(err) throw err;
-					expect(res.status).to.be.equal(500);	
-					expect(res.body).to.have.property('key');
-					expect(res.body.key).to.be.equal("error_500");
-					done();
-				});
-		})
-		it("Should fail sign in if DB returns error", (done) => {			
-			stubUser.findOne.yields(new Error("mongoerror"), null);	
-			var user_to_signin = { username: 'marcus', password:"12345678" };
-			
-			request(app)
-				.post('/signin')
-				.send(user_to_signin)								
-				.expect(500)
-				.end((err, res) => {
-					if(err) throw err;					
-					expect(res.status).to.be.equal(500);					
-					expect(res.body).to.have.property('key');
-					expect(res.body.key).to.be.equal("error_500");
-					expect(res.body.message).to.be.equal("mongoerror");
-					done();
-				});
-		})
-		it("Should fail sign in if error creating a token", (done) => {
-			stubUser.findOne.yields(null, user_to_find);
-			stubJwtHelper.create.yields(new Error("tokenerror"), null);		
-			
-			var user_to_signin = { username: 'marcus', password:"12345678" };
-			request(app)
-				.post('/signin')
-				.send(user_to_signin)							
-				.expect(500)
-				.end((err, res) => {
-					if(err) throw err;
-					expect(res.status).to.be.equal(500);					
-					expect(res.body).to.have.property('key');
-					expect(res.body.key).to.be.equal("error_500");
-					expect(res.body.message).to.be.equal("tokenerror");
-					done();
-				});
-		})
+	describe("User authentication controller tests", () => {
+		describe("Sign in user", () => {
+			it("Should sign in without problems", (done) => {
+				var user_to_signin = { username: 'marcus', password: '123456789' };
+				request(app)
+					.post('/signin')
+					.send(user_to_signin)
+					.expect(200)
+					.end((err, res) => {
+						expect(res.status).to.be.equal(200);
+						expect(findOneStub).to.have.been.calledOnes;
+						expect(stubJwtHelper.create).to.have.been.calledOnes;
+						expect(res.body).to.have.property('token');
+						expect(res.body.token).to.be.equal("0254879456");
+						done();
+					});
+			})
+			it("Should fail to sign in without password", (done) => {
+				var user_to_signin = { username: 'marcus' };
+				request(app)
+					.post('/signin')
+					.send(user_to_signin)
+					.expect(500)
+					.end((err, res) => {
+						expect(res.status).to.be.equal(500);
+						expect(res.body).to.have.property('key');
+						expect(res.body.key).to.be.equal("error_500");
+						done();
+					});
+			})
+			it("Should fail to sign in if MongoDB returns error", (done) => {
+				findOneStub.yields(new Error("mongoerror"), null);
+				var user_to_signin = { username: 'marcus', password: "12345678" };
 
-		it("Should signout", () => { })
-		it("Should signup", (done) => {
-			request(app)
-				.post('/signup')
-				.expect({ name: "test" }, done);
-		})
+				request(app)
+					.post('/signin')
+					.send(user_to_signin)
+					.expect(500)
+					.end((err, res) => {
+						expect(res.status).to.be.equal(500);
+						expect(res.body).to.have.property('key');
+						expect(res.body.key).to.be.equal("error_500");
+						expect(res.body.message).to.be.equal("mongoerror");
+						done();
+					});
+			})
+			it("Should fail to sign in if error creating a token occurs", (done) => {
+				findOneStub.yields(null, user_to_find);
+				stubJwtHelper.create.yields(new Error("tokenerror"), null);
 
-		it("Should call", () => {
-			stubUser.save((err, res) => {
-				
-			});			
+				var user_to_signin = { username: 'marcus', password: "12345678" };
+				request(app)
+					.post('/signin')
+					.send(user_to_signin)
+					.expect(500)
+					.end((err, res) => {
+						expect(res.status).to.be.equal(500);
+						expect(res.body).to.have.property('key');
+						expect(res.body.key).to.be.equal("error_500");
+						expect(res.body.message).to.be.equal("tokenerror");
+						done();
+					});
+			})
+			it("Should fail to sign in if authentication does not pass", (done) => {
+				user_to_find = {
+					authenticate: () => {
+						return false;
+					}
+				}
+				findOneStub.yields(null, user_to_find);
+				stubJwtHelper.create.yields(null, null);
+
+				var user_to_signin = { username: 'marcus', password: "12345678" };
+				request(app)
+					.post('/signin')
+					.send(user_to_signin)
+					.expect(401)
+					.end((err, res) => {
+						expect(res.status).to.be.equal(401);
+						done();
+					});
+			})
+		})
+		describe("Sign up user", () => {
+			it("Should sign up without problems", (done) => {
+				var user_to_signin = { username: 'marcus', password: '123456789', email: "john@doe.com" };
+				stubJwtHelper.create.yields(null, { token: "0254879456" });
+				request(app)
+					.post('/signup')
+					.send(user_to_signin)
+					.expect(200)
+					.end((err, res) => {
+						expect(res.status).to.be.equal(200);
+						expect(stubJwtHelper.create).to.have.been.called;
+						expect(res.body).to.have.property('token');
+						expect(res.body.token).to.be.equal("0254879456");
+						done();
+					});
+			})
+
+
+			it("Should get errors from list", (done) => {
+				var user_to_signin = { username: 'marcus', password: '123456789', email: "john@doe.com" };
+				saveStub.yields({ name: "ValidationError", errors: [{ message: "error1" }, { message: "error2" }] }, null);
+
+				request(app)
+					.post('/signup')
+					.send(user_to_signin)
+					.expect(400)
+					.end((err, res) => {
+						expect(res.status).to.be.equal(400);
+						expect(res.body).to.to.have.property("key");
+						expect(res.body.message).to.to.have.length(2);
+						expect(stubJwtHelper.create).to.have.not.been.called;
+						done();
+					});
+			});
 		});
-		
+		describe("Sign out user", () => {
+			it("Should get errors from list", (done) => {
+				request(app)
+					.post('/signout')
+					.expect(200)
+					.end((err, res) => {
+						expect(res.status).to.be.equal(200);
+						expect(res.text).to.be.equal("OK");
+						expect(stubJwtHelper.revoke).to.have.been.called;
+						done();
+					});
+			});
+		})
+		describe("Check user auth ", () => {
+			it("Should check authorization success", (done) => {				
+				request(app)
+					.post('/me')
+					.send({roles:["user"]})
+					.expect(200)
+					.end((err, res) => {
+						expect(res.status).to.be.equal(200);
+						expect(res.text).to.be.equal("OK");
+						expect(stubJwtHelper.revoke).to.have.been.called;
+						done();
+					});
+			});
+			it("Should check authorization fail (check if user admin)", (done) => {				
+				request(app)
+					.post('/me')
+					.send({roles:["user", "admin"]})//if user has these roles, should pass, but it don't
+					.expect(401)
+					.end((err, res) => {
+						expect(res.status).to.be.equal(401);
+						done(); 
+					});
+			});
+		})
 	});
 	after((done) => {
 		done();

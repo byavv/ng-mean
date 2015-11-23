@@ -24,7 +24,10 @@ module.exports =  function (app) {
             stats: { colors: true }
         }));*/
     }
-    app.use(morgan("dev"));
+    if (process.env.NODE_ENV !== "test") {
+        app.use(morgan("dev"));
+    }
+   
     app.use(cookieParser());
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
