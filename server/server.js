@@ -7,17 +7,18 @@ var async = require("async"),
     config = require("./config/config"),
     mongooseConfig = require("./config/mongoose"),
     expressConf = require("./config/express"),
-    nconf = require("nconf");
+    nconf = require("nconf"),
+    routesConf = require("./routes/routes");
     
-//import routesConf from "./routes/index";
+
 //import passportConfig from "./config/passport";
 
-let app = express();
+
 
 
 async.waterfall([
   (done) => {
-    config.configure(env, (err) => {
+    config.configure().for(env, (err) => {
       return done(err);
     });
   },
@@ -29,12 +30,15 @@ async.waterfall([
 ], (err, res) => {
   if (err) console.log(err);
   else {
+    let app = express();
+    expressConf(app);
+    routesConf(app);
     app.listen(nconf.get("httpPort"));
     console.log(chalk.green("Server started on port: " + nconf.get("httpPort") + "(" + ")"));
   }
 });
  
   
-  //expressConfig(app);
+ 
   //passportConfig();
-  //routesConfig(app);
+  

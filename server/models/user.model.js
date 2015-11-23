@@ -6,18 +6,15 @@ var mongoose = require('mongoose'),
     validate = require('mongoose-validator'),
     uniqueValidatorPlugin = require('mongoose-unique-validator');
 
-/**
- * A Validation function for local strategy properties
- */
+
 var validateLocalStrategyProperty = function (value) {
 	return (this.authProvider !== 'local' || (value && value.length > 0));
 };
+
 var validateLocalStrategyEmail = function(value){
 	return (this.authProvider !== 'local' || (/.+\@.+\..+/.test(value)));
 };
-/**
- * A Validation function for local strategy password
- */
+
 var validateLocalStrategyPassword = function (password) {
 	return (this.authProvider !== 'local' || (password && password.length > 5));
 };
@@ -32,7 +29,6 @@ var emailValidator = [
         message: 'Please fill in your email.'
     })
 ];
-
 
 var usernameValidator = validate({
     validator: validateLocalStrategyProperty,
@@ -52,7 +48,8 @@ var UserSchema = new Schema({
         validate: emailValidator,
 		set: function (value) {
             return value.toLowerCase();
-        }
+        },
+		unique: 'User with email: {VALUE} is already exists'
 	},
 	username: {
 		type: String,

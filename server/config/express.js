@@ -10,15 +10,15 @@ var express = require("express"),
     path = require( "path");
 //import wpConfig from "./webpack.conf";
 
-exports.configure =  function (app) {
-    let rootPath = process.cwd();
+module.exports =  function (app) {
+    var rootPath = process.cwd();
     app.set('views', rootPath + '/server/views');
     app.set('view engine', 'jade');
     if (process.env.NODE_ENV === "development") {
-        let webpackDevMiddleware = require("webpack-dev-middleware");
-        let webpack = require('webpack');
-       /* let webpackConfig = wpConfig();
-        let compiler = webpack(webpackConfig);
+        //var webpackDevMiddleware = require("webpack-dev-middleware");
+       // var webpack = require('webpack');
+       /* var webpackConfig = wpConfig();
+        var compiler = webpack(webpackConfig);
         app.use(webpackDevMiddleware(compiler, {
             publicPath: '/build/client',
             stats: { colors: true }
@@ -34,7 +34,7 @@ exports.configure =  function (app) {
 
     // error handler for all the applications 
     app.use((err, req, res, next) => {
-        let code = 500,
+        var code = 500,
             msg = { message: "Internal Server Error" };
         switch (err.name) {
             case "UnauthorizedError":
@@ -53,3 +53,4 @@ exports.configure =  function (app) {
         return res.status(code).json(msg);
     });
 };
+

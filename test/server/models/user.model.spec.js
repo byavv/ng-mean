@@ -1,5 +1,3 @@
-/// <reference path="../../../typings/tsd.d.ts" />
-
 var chai = require("chai");
 var mongooseConf = require("../../../server/config/mongoose");
 var config = require("../../../server/config/config");
@@ -13,7 +11,7 @@ describe("User model methods & validation tests", () => {
 	var User;
 	var user;
 	before((done) => {
-		config.configure("test", (err) => {
+		config.configure().for("test", (err) => {
 			if (err) {
 				console.error("Error config: " + err);
 				done(err);
@@ -22,7 +20,7 @@ describe("User model methods & validation tests", () => {
 					if (err) {
 						console.error("Error mongoose config: " + err);
 						done(err);
-					}
+					}  
 					User = mongoose.model("User");
 					done();
 				})
@@ -35,12 +33,11 @@ describe("User model methods & validation tests", () => {
 	})
 
 	describe("User model", () => {
-
 		afterEach(() => {
 			User.remove({}).exec();
 		})
 
-		it('should begin with no users', (done) => {
+		it('should begin with clean db', (done) => {
 			User.find({}, (err, users) => {
 				users.should.have.length(0);
 				done();
@@ -59,8 +56,7 @@ describe("User model methods & validation tests", () => {
 				assert(err);
 				done();
 			})
-		});
-		
+		});		
 		it("Should be authenticated, also after update (change user scenario)", (done) => {
 			var password = "123456789"
 			user = new User({						
@@ -101,7 +97,7 @@ describe("User model methods & validation tests", () => {
 						done();
 					});
 				});
-				it('should fail to save if user with the same username is already registered', function (done) {
+				it('Should fail to save if user with the same username is already registered', function (done) {
 					var user1 = new User({
 						username: "test",
 						email: "ber@gog.com",
@@ -112,8 +108,8 @@ describe("User model methods & validation tests", () => {
 						email: "ber@gog.com",
 						password: "qwerty123456"
 					});
-					user1.save(function () {
-						user2.save(function (err) {
+					user1.save( () => {
+						user2.save((err) => {
 							expect(err.errors).have.property("username");
 							done();
 						});

@@ -9,33 +9,26 @@ var _ = require('lodash'),
   runSequence = require('run-sequence'),
   plugins = gulpLoadPlugins(),
   path = require('path'),
+  gutil = require("gulp-util"),
   ts = require('gulp-typescript');
 var sourcemaps = require('gulp-sourcemaps');
 // Mocha tests task
-gulp.task('mocha', function (done) {
-  // Open mongoose connections
-  //var mongoose = require('./server/config/mongoose.js');
-  var error;
-  process.env.NODE_ENV = 'test'
-  // Connect mongoose
-  //  mongoose.connect(function() {
-  // Run the tests
-  gulp.src(['test/server/**/*.spec.js'])
+
+gulp.task("set_test", () => {
+  process.env.NODE_ENV = 'test';
+})
+gulp.task('mocha', ["set_test"], () => {
+  gulp.src(['test/server/**/*.spec.js'], { read: false })
     .pipe(plugins.mocha({
       reporter: 'spec'
     }))
-    .on('error', function (err) {
-      // If an error occurs, save it
-      error = err;
-    })
-    .on('end', function () {
-      // When the tests are done, disconnect mongoose and pass the error state back to gulp
-      //    mongoose.disconnect(function() {
-      //     done(error);
-      //   });
-      //     });
-    });
+    .on('error', gutil.log);
 });
+
+gulp.task("watch-mocha", ["set_test"], () => {
+  gulp.run("mocha"); 
+  gulp.watch(["server/**/*.js", "test/**/*.js"],["mocha"]);    
+})
 
 gulp.task('karma', function () {
   return gulp.src([])
