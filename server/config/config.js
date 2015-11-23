@@ -5,7 +5,7 @@ var path = require("path"),
     nconf = require("nconf"),
     chalk = require("chalk"),
     defaultConf = require("./defaults");
-    
+
 
 /**
  * Add environment specific configuration
@@ -18,7 +18,7 @@ let config = {
                 if (err) return done(err);
                 !!files && files.forEach((file) => {
                     if (file.match(new RegExp(env))) {
-                        nconf.overrides(require(configPath + '/' + file).config);
+                        nconf.overrides(require(configPath + '/' + file));
                         console.log(chalk.green(
                             'Configuration for ' +
                             chalk.white.bgBlue(env.toUpperCase()) +

@@ -1,5 +1,5 @@
 var chai = require("chai");
-var mongooseConf = require("../../../server/config/mongoose");
+
 var config = require("../../../server/config/config");
 var mongoose = require("mongoose");
 
@@ -11,23 +11,7 @@ describe("User model methods & validation tests", () => {
 	var User;
 	var user;
 	before((done) => {
-		config.configure.for("test", (err) => {
-			if (err) {
-				console.error("Error config: " + err);
-				done(err);
-			} else {
-				mongooseConf.configure((err) => {
-					if (err) {
-						console.error("Error mongoose config: " + err);
-						done(err);
-					}  
-					User = mongoose.model("User");
-					done();
-				})
-			}
-		}) 
-	})
-	before((done) => {
+		User = mongoose.model("User");
 		user = new User();
 		done();
 	})
@@ -56,25 +40,25 @@ describe("User model methods & validation tests", () => {
 				assert(err);
 				done();
 			})
-		});		
+		});
 		it("Should be authenticated, also after update (change user scenario)", (done) => {
 			var password = "123456789"
-			user = new User({						
-						username: "John Doe",
-						password: password,
-						email:"john@doe.com"
-					});
-			user.save((err, res) => {	
-				expect(user.authenticate(password)).to.equal(true);	
-				user.username = "Megan Doe";	
-				user.password =  password;
-				user.save((err, res) => {						
-					expect(user.authenticate(password)).to.equal(true);	
+			user = new User({
+				username: "John Doe",
+				password: password,
+				email: "john@doe.com"
+			});
+			user.save((err, res) => {
+				expect(user.authenticate(password)).to.equal(true);
+				user.username = "Megan Doe";
+				user.password = password;
+				user.save((err, res) => {
+					expect(user.authenticate(password)).to.equal(true);
 					done();
-				})	
+				})
 			})
 		});
-		
+
 		describe("User Validation", () => {
 			describe("Username", () => {
 				it("Should fail saving and fire validation error with empty username when local provider", (done) => {
@@ -108,7 +92,7 @@ describe("User model methods & validation tests", () => {
 						email: "ber@gog.com",
 						password: "qwerty123456"
 					});
-					user1.save( () => {
+					user1.save(() => {
 						user2.save((err) => {
 							expect(err.errors).have.property("username");
 							done();
@@ -175,9 +159,9 @@ describe("User model methods & validation tests", () => {
 			});
 			describe("Password", () => {
 				it("Should fail saving and fire password validation error, if password is empty", (done) => {
-					user = new User({						
+					user = new User({
 						username: "John Doe",
-						email:"mean@mean.com"
+						email: "mean@mean.com"
 					});
 					user.save((err, res) => {
 						expect(err.errors).have.property("password");
@@ -185,10 +169,10 @@ describe("User model methods & validation tests", () => {
 					});
 				});
 				it("Should fail saving and fire password validation error, if password is not strong enouph", (done) => {
-					user = new User({						
+					user = new User({
 						username: "John Doe",
-						email:"mean@mean.com",
-						password:"11111"
+						email: "mean@mean.com",
+						password: "11111"
 					});
 					user.save((err, res) => {
 						expect(err.errors).have.property("password");
@@ -196,10 +180,10 @@ describe("User model methods & validation tests", () => {
 					});
 				});
 				it("Should pass if password is longer then 6", (done) => {
-					user = new User({						
+					user = new User({
 						username: "John Doe",
-						email:"mean@mean.com",
-						password:"111111"
+						email: "mean@mean.com",
+						password: "111111"
 					});
 					user.save((err, res) => {
 						expect(res).have.property("username").equal("John Doe");
@@ -209,16 +193,6 @@ describe("User model methods & validation tests", () => {
 			})
 		});
 
-		after((done) => {
-			User.remove({}, () => {
-				console.log("DB cleaned");
-				mongooseConf.close((err) => {
-					if (err) {
-						console.log(err);
-					}
-					done();
-				})
-			});
-		})
+
 	})
 });

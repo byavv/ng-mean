@@ -12,11 +12,6 @@ describe('JWT util tests', () => {
     setexStub,
     expireStub;
   before((done) => {
-    config.configure.for("test", (err) => {
-      done();
-    })
-  })
-  before((done) => {
     var redisMock = {};
     setexStub = sinon.stub().yields(null);
     expireStub = sinon.stub().yields(null, "fake_token_replyed_by_redis");
@@ -42,5 +37,5 @@ describe('JWT util tests', () => {
       expect(expireStub).to.have.been.calledOnes;
       done();
     });
-  })  
+  })
 });
