@@ -5,19 +5,13 @@ var path = require("path"),
     nconf = require("nconf"),
     chalk = require("chalk"),
     defaultConf = require("./defaults");
+    
 
 /**
- * Create app configuration, depending on environment
+ * Add environment specific configuration
  */
-module.exports = {
-    configure: function () {
-        nconf.argv().env();
-        nconf.use('memory');
-        nconf.defaults(defaultConf);
-        return this;
-    },
-
-    for: function (env, done) {
+let config = {
+    for: (env, done) => {
         let configPath = path.join(__dirname, './env');
         try {
             fs.readdir(configPath, (err, files) => {
@@ -38,4 +32,17 @@ module.exports = {
             done(error);
         }
     }
-}
+};
+/**
+ * Default app configuration
+ * Use: config.configure.for("Development",(err)=>{..})
+ */
+Object.defineProperty(config, "configure", {
+    get: () => {
+        nconf.argv().env();
+        nconf.use('memory');
+        nconf.defaults(defaultConf);
+        return config;
+    }
+});
+module.exports = config;
