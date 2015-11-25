@@ -1,6 +1,7 @@
 var request = require('supertest'),
 	express = require('express'),
 	sinon = require("sinon"),
+	rewire = require("rewire"),
 	chai = require("chai"),
 	//mongooseConf = require("../../../server/config/mongoose"),
 	
@@ -9,9 +10,6 @@ var request = require('supertest'),
 	//mongoose = require("mongoose"),
 	assert = chai.assert,
 	expect = chai.expect;
-
-
-chai.should();
 
 describe("User authentication controller unit tests", () => {
 	var app;
@@ -33,7 +31,7 @@ describe("User authentication controller unit tests", () => {
 		//mongoose User model mock
 		User = function () {
 			this.save = saveStub;
-		 };
+		};
 		User.findOne = findOneStub;		
 				
 		//jwt util mock
@@ -54,7 +52,9 @@ describe("User authentication controller unit tests", () => {
 		stubJwtHelper.create.yields(null, { token: "0254879456" });
 		stubJwtHelper.revoke.yields(null);
 
-		controller = require("../../../server/controllers/user.auth.controller")(User, stubJwtHelper);
+		controller = rewire("../../../server/controllers/user.auth.controller");
+		controller.__set__("User", User);
+		controller.__set__("tokenHelper", stubJwtHelper);
 		done();
 	})
 	before(() => {
@@ -73,6 +73,9 @@ describe("User authentication controller unit tests", () => {
 
 
 	describe("Sign in user", () => {
+		afterEach(()=>{
+			findOneStub.reset();
+		})
 		it("Should sign in without problems", (done) => {
 			var user_to_signin = { username: 'marcus', password: '123456789' };
 			request(app)
@@ -81,8 +84,8 @@ describe("User authentication controller unit tests", () => {
 				.expect(200)
 				.end((err, res) => {
 					expect(res.status).to.be.equal(200);
-					expect(findOneStub).to.have.been.calledOnes;
-					expect(stubJwtHelper.create).to.have.been.calledOnes;
+					expect(findOneStub).to.have.been.calledOnes;					
+					expect(stubJwtHelper.create.called).to.be.equal(true);	
 					expect(res.body).to.have.property('token');
 					expect(res.body.token).to.be.equal("0254879456");
 					done();
@@ -183,8 +186,8 @@ describe("User authentication controller unit tests", () => {
 				.end((err, res) => {
 					expect(res.status).to.be.equal(400);
 					expect(res.body).to.to.have.property("key");
-					expect(res.body.message).to.to.have.length(2);
-					expect(stubJwtHelper.create).to.have.not.been.called;
+					expect(res.body.message).to.to.have.length(2);					
+					expect(stubJwtHelper.create.called).to.be.equal(true);	
 					done();
 				});
 		});
@@ -197,7 +200,7 @@ describe("User authentication controller unit tests", () => {
 				.end((err, res) => {
 					expect(res.status).to.be.equal(200);
 					expect(res.text).to.be.equal("OK");
-					expect(stubJwtHelper.revoke).to.have.been.called;
+					expect(stubJwtHelper.revoke.called).to.be.equal(true);	
 					done();
 				});
 		});
@@ -211,7 +214,7 @@ describe("User authentication controller unit tests", () => {
 				.end((err, res) => {
 					expect(res.status).to.be.equal(200);
 					expect(res.text).to.be.equal("OK");
-					expect(stubJwtHelper.revoke).to.have.been.called;
+					expect(stubJwtHelper.revoke.called).to.be.equal(true);					
 					done();
 				});
 		});

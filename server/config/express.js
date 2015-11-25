@@ -7,22 +7,22 @@ var express = require("express"),
     cookieParser = require( "cookie-parser"),
     session = require( "express-session"),
     methodOverride = require( "method-override"),
-    path = require( "path");
-//import wpConfig from "./webpack.conf";
+    path = require( "path"),
+    wpConfig = require("./webpack");
 
 module.exports =  function (app) {
     var rootPath = process.cwd();
     app.set('views', rootPath + '/server/views');
     app.set('view engine', 'jade');
     if (process.env.NODE_ENV === "development") {
-        //var webpackDevMiddleware = require("webpack-dev-middleware");
-       // var webpack = require('webpack');
-       /* var webpackConfig = wpConfig();
+        var webpackDevMiddleware = require("webpack-dev-middleware");
+        var webpack = require('webpack');
+        var webpackConfig = wpConfig();
         var compiler = webpack(webpackConfig);
         app.use(webpackDevMiddleware(compiler, {
             publicPath: '/build/client',
             stats: { colors: true }
-        }));*/
+        }));
     }
     if (process.env.NODE_ENV !== "test") {
         app.use(morgan("dev"));

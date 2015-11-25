@@ -24,10 +24,11 @@ exports.configure = function (done) {
 		fs.readdir(modelsPath, (err, modelsFiles) => {
 			if (err) return done(err);
 			else {
+				console.info("Models loaded: ");
 				!!modelsFiles && modelsFiles.forEach((file) => {
 					if (/(.*)\.(js$)/.test(file)) {
 						var model = require(path.join(modelsPath, file));
-						console.info("Loaded " + chalk.grey(model.modelName) + " model");
+						console.info("	" + chalk.grey(model.modelName));
 					}
 				});
 				done(null);

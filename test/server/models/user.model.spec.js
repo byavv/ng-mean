@@ -47,10 +47,10 @@ describe("User model methods & validation tests", () => {
 				username: "John Doe",
 				password: password,
 				email: "john@doe.com"
-			});
+			}); 
 			user.save((err, res) => {
 				expect(user.authenticate(password)).to.equal(true);
-				user.username = "Megan Doe";
+				user.username = "Megan Doe"; 
 				user.password = password;
 				user.save((err, res) => {
 					expect(user.authenticate(password)).to.equal(true);

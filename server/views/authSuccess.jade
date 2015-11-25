@@ -1,0 +1,34 @@
+doctype html
+html
+   head
+      meta(charset='utf-8')
+      meta(http-equiv='X-UA-Compatible', content='IE=edge')
+      title Authentication
+      base(href='/')
+      meta(name='description', content='')
+      meta(name='viewport', content='width=device-width, initial-scale=1')
+      script(type="text/javascript").
+         var user = !{JSON.stringify(user)};
+         //was opened in new tab
+         if (window.opener && window.opener != window.self) {
+            // window was rendered by passport callback, so if user is available
+            // send it to owner window and close current
+            window.opener.focus();
+            if (window.opener.app && typeof window.opener.app.update == "function") {
+               if(!!user){
+                  localStorage.setItem('ls.authorizationData', JSON.stringify(user));
+                  window.opener.app.update();
+               }
+            }
+            window.close();
+         }else{
+            if(!!user){
+               localStorage.setItem('ls.authorizationData', JSON.stringify(user));
+               location.assign("/");
+               location.reload(true);
+            }else{
+               location.assign("/");
+               location.reload(true);
+            }
+         }
+   body

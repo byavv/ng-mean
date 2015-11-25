@@ -6,7 +6,6 @@ var path = require("path"),
     chalk = require("chalk"),
     defaultConf = require("./defaults");
 
-
 /**
  * Add environment specific configuration
  */
@@ -33,6 +32,7 @@ let config = {
         }
     }
 };
+
 /**
  * Default app configuration
  * Use: config.configure.for("Development",(err)=>{..})

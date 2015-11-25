@@ -66,7 +66,7 @@ var UserSchema = new Schema({
 	salt: { type: String },
 	imageUrl: { type: String },
     authProvider: {
-		type: String,
+		type:  String ,
 		providerData: {},
 		default: 'local'
 	},
