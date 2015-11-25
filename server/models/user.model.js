@@ -66,9 +66,11 @@ var UserSchema = new Schema({
 	salt: { type: String },
 	imageUrl: { type: String },
     authProvider: {
-		type:  String ,
-		providerData: {},
+		type:  String ,		
 		default: 'local'
+	},
+	extOAuth: {
+		providerData: {}
 	},
 	profile:{
 		name: String,

@@ -2,19 +2,11 @@
 "use strict";
 let env = process.env.NODE_ENV || "development";
 var async = require("async"),
-    express = require("express"),
-    chalk = require("chalk"),
-    config = require("./config/config"),
-    mongooseConfig = require("./config/mongoose"),
-    expressConf = require("./config/express"),
-    nconf = require("nconf"),
-    routesConf = require("./routes/routes");
-    
-
-//import passportConfig from "./config/passport";
-
-
-
+  express = require("express"),
+  chalk = require("chalk"),
+  config = require("./config/config"),
+  mongooseConfig = require("./config/mongoose"),
+  nconf = require("nconf");
 
 async.waterfall([
   (done) => {
@@ -31,14 +23,12 @@ async.waterfall([
   if (err) console.log(err);
   else {
     let app = express();
-    expressConf(app);
-    routesConf(app);
+    require("./config/passport")();
+    require("./config/express")(app);
+    require("./routes/routes")(app);
+
     app.listen(nconf.get("httpPort"));
-    console.log(chalk.green("Server started on port: " + nconf.get("httpPort") + "(" + ")"));
+    console.log(chalk.green("Server started on http port: " + nconf.get("httpPort")));
   }
 });
- 
-  
- 
-  //passportConfig();
-  
+

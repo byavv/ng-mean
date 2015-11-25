@@ -19,7 +19,7 @@ describe('JWT util tests', () => {
     redisMock.expire = expireStub;
     jwtHelper = require("../../../server/utils/jwt.helper")(redisMock);
     done();
-  })
+  });
   it('Should create new ', (done) => {
     var user = { _id: "fakeid1", roles: ["user"] }
     jwtHelper.create(user, (err, clientdata) => {
@@ -34,7 +34,7 @@ describe('JWT util tests', () => {
     jwtHelper.revoke(payload, (err, reply) => {
       expect(err).to.be.null;
       expect(reply).to.be.equal("fake_token_replyed_by_redis");
-      expect(expireStub).to.have.been.calledOnes;
+      expect(expireStub.calledOnce).to.have.be.equal(true);
       done();
     });
   })

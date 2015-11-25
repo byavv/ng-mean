@@ -12,7 +12,7 @@
       "commit": "16134c168d021351acb1673ee9659644fc58c424"
     },
     "node/node.d.ts": {
-      "commit": "fa04c80f4a889613b96cb4f283848c61a9f64233"
+      "commit": "36c6ce86fb64bafb28ec95dc78c6b98228b45c8d"
     },
     "mocha/mocha.d.ts": {
       "commit": "16134c168d021351acb1673ee9659644fc58c424"
@@ -39,13 +39,13 @@
       "commit": "16134c168d021351acb1673ee9659644fc58c424"
     },
     "mime/mime.d.ts": {
-      "commit": "16134c168d021351acb1673ee9659644fc58c424"
+      "commit": "36c6ce86fb64bafb28ec95dc78c6b98228b45c8d"
     },
     "express/express.d.ts": {
-      "commit": "16134c168d021351acb1673ee9659644fc58c424"
+      "commit": "36c6ce86fb64bafb28ec95dc78c6b98228b45c8d"
     },
     "serve-static/serve-static.d.ts": {
-      "commit": "16134c168d021351acb1673ee9659644fc58c424"
+      "commit": "36c6ce86fb64bafb28ec95dc78c6b98228b45c8d"
     },
     "cookie-parser/cookie-parser.d.ts": {
       "commit": "16134c168d021351acb1673ee9659644fc58c424"
@@ -79,6 +79,18 @@
     },
     "lodash/lodash.d.ts": {
       "commit": "ba424f7ee39717d51c17699a09ac8df312a7e9a1"
+    },
+    "bluebird/bluebird.d.ts": {
+      "commit": "36c6ce86fb64bafb28ec95dc78c6b98228b45c8d"
+    },
+    "karma/karma.d.ts": {
+      "commit": "36c6ce86fb64bafb28ec95dc78c6b98228b45c8d"
+    },
+    "log4js/log4js.d.ts": {
+      "commit": "36c6ce86fb64bafb28ec95dc78c6b98228b45c8d"
+    },
+    "jasmine/jasmine.d.ts": {
+      "commit": "36c6ce86fb64bafb28ec95dc78c6b98228b45c8d"
     }
   }
 }

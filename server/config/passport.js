@@ -2,25 +2,24 @@
 
 var mongoose = require('mongoose'),
 	passport = require("passport"),
-	config = require("./config_common.js"),
-	url = require('url'),
+	nconf = require("nconf"),	
 	GitHubStrategy = require('passport-github2').Strategy,
 	User = mongoose.model("User");
 
 module.exports = function () {
 	passport.use(
 		new GitHubStrategy({
-			clientID: config.github.clientID,
-			clientSecret: config.github.clientSecret,
-			callbackURL: "/auth/github/callback"
+			clientID: nconf.get("github").clientID,
+			clientSecret: nconf.get("github").clientSecret,
+			callbackURL: nconf.get("github").callbackURL
 		}, function (accessToken, refreshToken, profile, done) {
 			process.nextTick(() => {
 				// find the user in the database based on github id
-				User.findOne({authProvider: "github", 'authProvider.providerData.id': profile.id}, function (err, user) {
+				User.findOne({authProvider: "github", 'extOAuth.providerData.id': profile.id}, function (err, user) {
 					// if there is an error, stop everything and return that
 					// ie an error connecting to the database
 					if (err)
-						return done(err);
+						return done(err); 
 
 					// if the user is found, then log them in
 					if (user) {
@@ -34,7 +33,8 @@ module.exports = function () {
 						newUser.authProvider = "github";
 						newUser.username = profile.username;
 						newUser.imageUrl = profile._json.avatar_url;
-						newUser.authProvider.providerData = {
+						newUser.extOAuth = {};
+						newUser.extOAuth.providerData = {
 							id: profile.id, // set the account github id
 							token: accessToken, // we will save the token that github provides to the user
 							name: profile.username,// look at the passport user profile to see how names are returned

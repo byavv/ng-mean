@@ -1,0 +1,25 @@
+<div class="row">
+    <h3 class="col-md-12 text-center">Forgot Password?</h3>
+    <div class="col-xs-offset-2 col-xs-8 col-md-4 col-md-offset-4">
+        <div class="login-form-container">
+            <alert ng-if="!!vm.error" type="danger" close="vm.closeAlert()" class="error-alert">
+                {{vm.error}}
+            </alert>
+            <alert ng-if="!!vm.info" type="info" close="vm.closeAlert()" class="error-alert">
+                {{vm.info}}
+            </alert>
+            <form ng-submit="vm.submit()" name="vm.forgetForm" novalidate role="form">
+                <div class="form-group">
+                    <label for="email" class="control-label">Email:</label>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="e-mail"
+                           ng-model="vm.email">
+                </div>
+                <div class="row">
+                    <div  class="col-md-12 content content">
+                        <button type="submit" class="btn btn-primary sing-form-button">Send instructions email</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

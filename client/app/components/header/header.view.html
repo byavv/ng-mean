@@ -1,0 +1,42 @@
+<header class="container">
+	<div class="navbar navbar-default navbar-fixed-top app-header">
+		<div class="header-container center-block">
+			<div class="navbar-header">
+			<a class="navbar-brand" href="/">TS MEAN</a>
+			<button class="btn btn-default navbar-toggle"
+					data-toggle="collapse"
+					data-target=".navbar-collapse">
+				<span class="glyphicon glyphicon-collapse-down"></span>
+			</button>
+		</div>
+		<div>
+		<div class="navbar-collapse collapse" ng-controller="authMenuCtrl as vm">
+			<ul class="nav navbar-nav navbar-right" data-ng-hide="vm.identityService.isAuthenticated()">
+				<li ng-class="{active: $uiRoute}">
+					<a href="/signup">Sign Up</a>
+				</li>
+				<li class="divider-vertical"></li>
+				<li ng-class="{active: $uiRoute}">
+					<a href="/signin">Sign In</a>
+				</li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right" data-ng-show="vm.identityService.isAuthenticated()">
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						<span data-ng-bind="vm.identityService.user.username"></span> <b class="caret"></b>
+					</a>
+					<ul class="dropdown-menu">
+						<li>
+							<a href="/profile">Edit Profile</a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="" ng-click="vm.signOut()">Signout</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div></div>
+	</div>
+</header>

@@ -24,10 +24,7 @@ before((done) => {
 		}
  		User = mongoose.model("User");
 		done();
-	})
-});
-before((done) => {
-	process.nextTick(done);
+	}) 
 });
 after((done) => {
 	User.remove({}, () => {

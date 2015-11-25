@@ -29,6 +29,10 @@ module.exports = {
             }
         });
     },
+    /**
+     * Route callback for POST "/api/account"
+     * returns user account data
+     */
     postAccount: function (req, res) {
         User.findOne({
             _id: req.user.id
@@ -44,7 +48,7 @@ module.exports = {
                 };
                 return res.status(200).json(account);
             }
-        });
+        }); 
     },
     /**
      * Update user account data
@@ -54,7 +58,7 @@ module.exports = {
         var userId = req.user.id;
         if (userId && req.body.account) {
             User.findOne({ _id: userId }, (err, user) => {
-                if (err)  res.status(500).send();
+                if (err) res.status(500).send();
                 if (!user) {
                     res.status(400).send({ key: "error_user_found" });
                 }

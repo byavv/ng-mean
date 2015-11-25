@@ -1,4 +1,4 @@
-var webpackConfig = require("./server/config/webpack")({mode:"test", rootpath:"/"});
+var webpackConfig = require("./server/config/webpack")({mode:"test"});
 var webpack = require("webpack");
 
 module.exports = function(config) {

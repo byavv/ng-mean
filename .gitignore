@@ -2,4 +2,5 @@
 .vscode
 /build
 /typings
+/client/vendor
 npm-debug.log

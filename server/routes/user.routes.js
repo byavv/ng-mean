@@ -1,6 +1,6 @@
 'use strict';
 
-var tokenHelper = require('../utils/jwt.helper')(),
+var tokenHelper = require('../utils/jwt.helper'),
 	jwt = require("express-jwt"),
 	nconf = require("nconf"),
 	passport = require('passport'),
@@ -11,7 +11,7 @@ module.exports = function (app) {
 	app.route('/api/profile').post(jwt({
 		secret: nconf.get("jwtAuth").secret,
 		isRevoked: tokenHelper.isRevoked
-	}),  api.postProfile);
+	}), api.postProfile);
 
 	// Update user profile
 	app.route('/api/profile').put(jwt({
@@ -22,18 +22,16 @@ module.exports = function (app) {
 	app.route("/api/account").post(jwt({
 		secret: nconf.get("jwtAuth").secret,
 		isRevoked: tokenHelper.isRevoked
-	}),api.postAccount);
+	}), api.postAccount);
 
 	app.route('/api/updateaccount').post(jwt({
 		secret: nconf.get("jwtAuth").secret,
 		isRevoked: tokenHelper.isRevoked
-	}),api.updateAccount);
-	
+	}), api.updateAccount);
+
 	app.route('/api/forgot').post(api.forgot);
 	app.route('/api/resetpassword/').post(api.resetForgotPassword);
-	app.route('/api/reset/:token').get(api.validateResetToken);
-
-	
+	app.route('/api/reset/:token').get(api.validateResetToken);	
 
 	// Local authentication routes
 	app.route('/auth/signup').post(auth.signup);
@@ -45,9 +43,7 @@ module.exports = function (app) {
 	app.route('/auth/me').post(jwt({
 		secret: nconf.get("jwtAuth").secret,
 		isRevoked: tokenHelper.isRevoked
-	}), auth.me);
-
-	
+	}), auth.me);	
 
 	//Github authentication routes
 	app.route('/auth/github').get(passport.authenticate('github', {

@@ -1,0 +1,119 @@
+.Absolute-Center() {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.loader-container {
+    position: absolute;
+    opacity: 0.8;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    background: #ffffff;
+    z-index: 999;
+
+    .loader {
+        width: 72px;
+        height: 72px;
+        .Absolute-Center();
+
+        .loader-block {
+            position: relative;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            float: left;
+            margin: 0 5px 5px 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            background: #cbcbcb;
+        }
+    }
+}
+
+
+
+.loader-block:nth-child(4n+1) {
+    -moz-animation: wave 2s ease .0s infinite;
+    -o-animation: wave 2s ease .0s infinite;
+    -webkit-animation: wave 2s ease .0s infinite;
+    animation: wave 2s ease .0s infinite;
+}
+
+.loader-block:nth-child(4n+2) {
+    -moz-animation: wave 2s ease .2s infinite;
+    -o-animation: wave 2s ease .2s infinite;
+    -webkit-animation: wave 2s ease .2s infinite;
+    animation: wave 2s ease .2s infinite;
+}
+
+.loader-block:nth-child(4n+3) {
+    -moz-animation: wave 2s ease .4s infinite;
+    -o-animation: wave 2s ease .4s infinite;
+    -webkit-animation: wave 2s ease .4s infinite;
+    animation: wave 2s ease .4s infinite;
+}
+
+.loader-block:nth-child(4n+4) {
+    -moz-animation: wave 2s ease .6s infinite;
+    -o-animation: wave 2s ease .6s infinite;
+    -webkit-animation: wave 2s ease .6s infinite;
+    animation: wave 2s ease .6s infinite;
+    margin-right: 0;
+}
+
+@-moz-keyframes wave {
+    0% {
+        top: -10px;
+        opacity: 1;
+    }
+
+    50% {
+        top: 10px;
+        opacity: .2;
+    }
+
+    100% {
+        top: -10px;
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes wave {
+    0% {
+        top: -10px;
+        opacity: 1;
+    }
+
+    50% {
+        top: 10px;
+        opacity: .2;
+    }
+
+    100% {
+        top: -10px;
+        opacity: 1;
+    }
+}
+
+@keyframes wave {
+    0% {
+        top: -10px;
+        opacity: 1;
+    }
+
+    50% {
+        top: 10px;
+        opacity: .2;
+    }
+
+    100% {
+        top: -10px;
+        opacity: 1;
+    }
+}

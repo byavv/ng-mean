@@ -167,7 +167,7 @@ describe("User authentication controller unit tests", () => {
 				.expect(200)
 				.end((err, res) => {
 					expect(res.status).to.be.equal(200);
-					expect(stubJwtHelper.create).to.have.been.called;
+					expect(stubJwtHelper.create.called).to.be.equal(true);
 					expect(res.body).to.have.property('token');
 					expect(res.body.token).to.be.equal("0254879456");
 					done();

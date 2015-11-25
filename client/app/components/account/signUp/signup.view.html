@@ -1,0 +1,55 @@
+<div class="row">
+    <h3 class="col-md-12 text-center">Create account</h3>
+    <div class="col-xs-offset-2 col-xs-8 col-md-4 col-md-offset-4">
+       <div class="login-form-container">
+           <alert ng-if="!!vm.error" type="danger" close="vm.closeAlert()" class="error-alert">
+               {{vm.error}}
+           </alert>
+           <form ng-submit="vm.submit()" name="vm.signinForm" novalidate role="form">
+            <div class="form-group"
+                 ng-class="{'has-error' : vm.signinForm.username.$invalid && vm.signinForm.$submitted}">
+                <label for="username" class="control-label">Username:</label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="name"
+                       ng-model="vm.user.username"
+                       required>
+                <div class="error-messages"
+                     ng-messages="vm.signinForm.username.$error"
+                     ng-if="vm.signinForm.$submitted">
+                    <div class="error-message" ng-message="required">You forgot to enter your name.</div>
+                </div>
+            </div>
+            <div class="form-group"
+                 ng-class="{'has-error' : vm.signinForm.email.$invalid && vm.signinForm.$submitted}">
+                <label for="email"  class="control-label">E-mail:</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="e-mail"
+                       ng-model="vm.user.email"
+                       required>
+                <div class="error-messages" role="alert"
+                     ng-messages="vm.signinForm.email.$error"
+                     ng-if="vm.signinForm.$submitted">
+                    <div class="error-message" ng-message="required">You forgot to enter your e-mail.</div>
+                    <div class="error-message" ng-message="email">E-mail {{vm.signinForm.email.$viewValue}} is invalid.</div>
+                </div>
+            </div>
+            <div class="form-group has-feedback"
+                 ng-class="{'has-error' : vm.signinForm.password.$invalid && vm.signinForm.$submitted}">
+                <label class="control-label" for="password">Password:</label>
+                <!--<div class="input-group">-->
+                    <input  type="password" class="form-control" id="password" name="password" placeholder="password"
+                            ng-model="vm.user.password"
+                            required
+                            password-strength-checker
+                            strength>
+                <!--</div>-->
+                <div class="error-messages" role="alert"
+                     ng-messages="vm.signinForm.password.$error"
+                     ng-if="vm.signinForm.$submitted">
+                    <div class="error-message" ng-message="required">You forgot to enter your password.</div>
+                    <div class="error-message" ng-message="strength">Your password is not strong enough.</div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary sing-form-button">Register</button>
+        </form>
+       </div>
+    </div>
+</div>

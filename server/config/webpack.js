@@ -4,7 +4,7 @@ var path = require('path'),
     BowerWebpackPlugin = require("bower-webpack-plugin"),
     NgAnnotatePlugin = require("ng-annotate-webpack-plugin");
 
-module.exports = function (config) {
+module.exports = function (mode) {
     var webpackConfig = {
         entry: {
             main: ['./client/app/app.module.ts'],
@@ -20,9 +20,9 @@ module.exports = function (config) {
             path.join("node_modules", '/angular'),
             path.join("node_modules", '/angular-route'),
             path.join("node_modules", '/angular-mocks'),
-            path.join("node_modules", '/lodash'),
+            path.join("node_modules", '/lodash'), 
             path.join("node_modules", '/angular-animate'),
-            path.join("node_modules", '/angular-messages')
+            path.join("node_modules", '/angular-messages')            
         ],
         module: {
             loaders: [
@@ -33,9 +33,9 @@ module.exports = function (config) {
                 { test: /\.(png|jpg)$/, loader: "url?limit=25000" },
                 { test: /\.jpe?g$|\.gif$|\.png$|\.wav$|\.mp3$|\.otf$/, loader: "file"},
                 { test: /\.(ttf|eot|svg|woff|woff2)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file" },
-                { test: /\.ts$/, loader: 'ts', exclude: [/node_modules/]}
+                { test: /\.ts$/, loader: 'ts'}
             ],
-            postLoaders: []
+            postLoaders: [] 
         },
         resolve: {
             extensions: ["", ".ts", ".js", ".less", ".sass"],
@@ -43,9 +43,9 @@ module.exports = function (config) {
         },
         plugins: [
             new webpack.DefinePlugin({
-                _PROD_MODE: JSON.stringify(config.mode === "production"),
-                _DEV_MODE: JSON.stringify((config.mode === "development")),
-                _TEST_MODE: JSON.stringify((config.mode === "test"))
+                _PROD_MODE: JSON.stringify(mode === "production"),
+                _DEV_MODE: JSON.stringify((mode === "development")),
+                _TEST_MODE: JSON.stringify((mode === "test"))
             }),
             new webpack.optimize.DedupePlugin(),
             new webpack.optimize.OccurenceOrderPlugin(true),
@@ -63,7 +63,7 @@ module.exports = function (config) {
         ]
     };
 
-    switch (config.mode) {
+    switch (mode) {
         case "test":
             webpackConfig.entry = {
                 app: ["./client/app/app.module.ts"]

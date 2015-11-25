@@ -9,6 +9,7 @@ html
       meta(name='viewport', content='width=device-width, initial-scale=1')
       script(type="text/javascript").
          var user = !{JSON.stringify(user)};
+         console.log("I CALLED" + user);
          //was opened in new tab
          if (window.opener && window.opener != window.self) {
             // window was rendered by passport callback, so if user is available
@@ -31,4 +32,4 @@ html
                location.reload(true);
             }
          }
-   body
+   body(style="background-color:black")     
