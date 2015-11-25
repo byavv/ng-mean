@@ -47,13 +47,14 @@ module.exports = {
         });
     },
     /**
-	* Change account data
-	*/
-    updateAccount: (req, res, next) => {
+     * Update user account data
+     * route callback for POST "/api/updateaccount""
+     */
+    updateAccount: function (req, res) {
         var userId = req.user.id;
         if (userId && req.body.account) {
-            User.findOne({ _id: userId }, function (err, user) {
-                if (err) return next(err);
+            User.findOne({ _id: userId }, (err, user) => {
+                if (err)  res.status(500).send();
                 if (!user) {
                     res.status(400).send({ key: "error_user_found" });
                 }
@@ -93,7 +94,7 @@ module.exports = {
     },
     /**
      * Get user profile data
-     * middleware for POST route: /profile/:id
+     * route callback for POST "/profile/:id""
      */
     postProfile: function (req, res) {
         User.findOne({
@@ -132,14 +133,14 @@ module.exports = {
     forgot: function (req, res, next) {
         async.waterfall([
             // generate random reset token
-            (done) => {                
+            (done) => {
                 crypto.randomBytes(20, function (err, buffer) {
                     var token = buffer.toString('hex');
                     done(err, token);
                 });
             },
             // save reset token in user profile
-            (token, done) => {                
+            (token, done) => {
                 if (req.body.email) {
                     User.findOne({
                         email: req.body.email
@@ -158,7 +159,7 @@ module.exports = {
                 }
             },
             // render email
-           (token, user, done) => {               
+            (token, user, done) => {
                 res.render('templates/reset-password-email', {
                     name: user.username,
                     appName: nconf.get("appName"),
@@ -188,7 +189,7 @@ module.exports = {
     /**
 	 * Change user password using reset password form
 	 */
-    resetForgotPassword: (req, res) => {
+    resetForgotPassword: function (req, res) {
         var newPassword = req.body.password;
         var token = req.body.token;
         if (newPassword && token) {

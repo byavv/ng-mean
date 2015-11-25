@@ -11,16 +11,17 @@ chai.should();
 describe("User api controller tests", () => {
 	var app;
 	var mockUser, mockMailHelper;
-	var findOneStub, saveStub, sendResetMailstub;
+	var findOneStub, saveStub, sendResetMailstub, authenticateStub;
 	var controller;
 	var user_to_find;
 	before((done) => {				
 		//user to be returnen as finded in db mock
+		authenticateStub = sinon.stub().returns(true);
 		user_to_find = {
 			_id: "123456789",
 			username: "John",
 			profile: "github",
-			authenticate: sinon.stub().returns(true),
+			authenticate: authenticateStub,
 			resetData: {},
 			save: sinon.stub().yields(null, { _id: 12587458 }),
 		}
@@ -37,7 +38,7 @@ describe("User api controller tests", () => {
 		mockMailHelper = {
 			sendResetMail: sendResetMailstub
 		}
-		
+
 		controller = rewire("../../../server/controllers/user.api.controller");
 		controller.__set__("User", mockUser);
 		controller.__set__("mailHelper", mockMailHelper);
@@ -57,15 +58,16 @@ describe("User api controller tests", () => {
 		app.post('/api/account', controller.postAccount);
 		app.put('/api/profile', controller.postProfile);
 		app.post('/api/forgot', controller.forgot);
+		app.post("/api/updateaccount", controller.updateAccount)
 
 	});
 
-  
+
 	describe("Reset password test", () => {
-		beforeEach(()=>{
+		beforeEach(() => {
 			//findOneStub = sinon.stub().yields(null, user_to_find);
-		})		
-		afterEach(()=>{
+		})
+		afterEach(() => {
 			findOneStub.reset();
 			sendResetMailstub.reset();
 		})
@@ -106,8 +108,8 @@ describe("User api controller tests", () => {
 					done();
 				});
 		})
-		it("Should send email with reset instructions", (done) => {			
-			sendResetMailstub.yields(null);
+		it("Should send email with reset instructions", (done) => {
+			sendResetMailstub.yields(null); 
 			findOneStub.yields(null, user_to_find);
 			request(app)
 				.post('/api/forgot')
@@ -115,23 +117,38 @@ describe("User api controller tests", () => {
 				.expect(200)
 				.end((err, res) => {
 					expect(res.status).to.be.equal(200);
-					expect(findOneStub.calledOnce).to.be.equal(true);					
-					expect(sendResetMailstub.calledOnce).to.be.equal(true);						
+					expect(findOneStub.calledOnce).to.be.equal(true);
+					expect(sendResetMailstub.calledOnce).to.be.equal(true);
 					done();
 				});
 		})
+		it("Should fail sending email with 400 EC if email is empty", (done) => {
+			sendResetMailstub.yields(null);
+			findOneStub.yields(null, user_to_find);
+			request(app)
+				.post('/api/forgot')
+				.send({ email: "" }) 
+				.expect(400)
+				.end((err, res) => {
+					expect(res.status).to.be.equal(400);
+					expect(findOneStub.calledOnce).to.be.equal(false);
+					expect(sendResetMailstub.calledOnce).to.be.equal(false);
+					done(); 
+				});
+		})
 	})
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	
-	
+
 	describe("Account and profile callbacks tests", () => {
-		beforeEach(()=>{
+		beforeEach(() => {
 			//findOneStub = sinon.stub().yields(null, user_to_find);
 		})
-		afterEach(()=>{
+		afterEach(() => {
 			findOneStub.reset();
 		})
 		it("Should return account data", (done) => {
-			findOneStub.yields(null, user_to_find);			
+			findOneStub.yields(null, user_to_find);
 			request(app)
 				.post('/api/account')
 				.expect(200)
@@ -142,8 +159,8 @@ describe("User api controller tests", () => {
 					done();
 				});
 		})
-		it("Should return profile data", (done) => {	
-			findOneStub.yields(null, user_to_find);		
+		it("Should return profile data", (done) => {
+			findOneStub.yields(null, user_to_find);
 			request(app)
 				.put('/api/profile')
 				.expect(200)
@@ -153,6 +170,21 @@ describe("User api controller tests", () => {
 					done();
 				});
 		})
+		it("Should update successfully with proper data and valid credentials", (done)=>{			
+			findOneStub.yields(null, user_to_find);
+			request(app)
+				.post('/api/updateaccount')
+				.send({account:{oldpassword:"old",password:"new", email:"email", username:"username"}})
+				.expect(200)
+				.end((err, res) => {
+					expect(res.status).to.be.equal(200);	
+					expect(findOneStub.calledOnce).to.be.equal(true);						
+					expect(findOneStub.calledWith({ _id: "12589541025" })).to.be.equal(true);
+					expect(authenticateStub.calledWith("old")).to.be.equal(true);		
+					expect(user_to_find.save.called).to.be.equal(true);
+					done();
+				});
+		})
 	})
 
-})
+}) 
