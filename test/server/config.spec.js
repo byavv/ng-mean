@@ -2,6 +2,10 @@ var config = require("../../server/config/config");
 var mongooseConf = require("../../server/config/mongoose");
 var mongoose = require("mongoose");
 var User;
+
+/**
+ * Global before, after blocks
+ */
 before((done) => {
 	config.configure.for("test", (err) => {
 		if (err) {
@@ -22,10 +26,12 @@ before((done) => {
 		done();
 	})
 });
-
+before((done) => {
+	process.nextTick(done);
+});
 after((done) => {
 	User.remove({}, () => {
-		console.log("DB cleaned");
+		console.log("Test database cleaned");
 		mongooseConf.close((err) => {
 			if (err) {
 				console.log(err);
