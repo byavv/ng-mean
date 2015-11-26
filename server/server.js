@@ -1,13 +1,14 @@
 /// <reference path="../typings/tsd.d.ts" />
 "use strict";
-let env = process.env.NODE_ENV || "development";
+
 var async = require("async"),
   express = require("express"),
   chalk = require("chalk"),
   config = require("./config/config"),
   mongooseConfig = require("./config/mongoose"),
-  //redisConfig = require("./config/redis"),
   nconf = require("nconf");
+
+let env = process.env.NODE_ENV || "development";
 
 async.waterfall([
   (done) => {
@@ -43,7 +44,6 @@ async.waterfall([
     } catch (error) {
       console.error(chalk.bgRed.white("App start error " + error));
     }
-
   }
 });
 

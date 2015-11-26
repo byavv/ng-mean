@@ -1,5 +1,6 @@
 "use strict"
 var redis = require("redis"),
+	chalk = require("chalk"),
 	nconf = require("nconf");
 
 module.exports = redis.createClient(nconf.get("redis"))
@@ -7,5 +8,5 @@ module.exports = redis.createClient(nconf.get("redis"))
 		throw err;
 	})
 	.on('connect', () => {
-		console.info("Connected to redis");
+		console.info(chalk.green("Connected to redis on port: " + nconf.get("redis").port));
 	});

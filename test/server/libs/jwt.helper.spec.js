@@ -20,12 +20,9 @@ describe('JWT util tests', () => {
     mockRedisClient.expire = expireStub;
     mockRedisClient.on = sinon.stub().yields(null);
     mockRedisClient.once = sinon.stub().yields(null);
-    
-    var mockRedis = {};
-    mockRedis.createClient = sinon.stub().returns(mockRedisClient);
-    
-    jwtHelper = rewire("../../../server/utils/jwt.helper");
-    jwtHelper.__set__("redis", mockRedis);    
+
+    jwtHelper = rewire("../../../server/libs/jwt.util");
+    jwtHelper.__set__("client", mockRedisClient);
     done();
   });
   it('Should create new ', (done) => {

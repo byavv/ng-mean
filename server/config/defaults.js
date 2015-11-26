@@ -21,7 +21,8 @@ module.exports = {
 		}
 	},
 	redis: {
-		httpPort: 6379,
-		host: "localhost"
+		port: 6379,
+		host: "localhost",
+		url: null
 	}
 };

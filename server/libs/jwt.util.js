@@ -46,9 +46,7 @@ module.exports = {
     /**
     * express-jwt isRevoked check * 
     */
-    isRevoked: function (req, payload, next) {
-       
-        console.log(client);
+    isRevoked: function (req, payload, next) {  
         client.get(payload.id, (err, token) => {
             if (err) {
                 return next(err);

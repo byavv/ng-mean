@@ -4,7 +4,7 @@ var mongoose = require("mongoose"),
     crypto = require("crypto"),
     User = mongoose.model("User"),
     async = require("async"),
-    mailHelper = require("../helpers/mail.helper"),
+    mailHelper = require("../libs/mail.helper"),
     nconf = require("nconf");
     
 
