@@ -10,9 +10,8 @@ var request = require('supertest'),
 describe("User authentication controller unit tests", () => {
 	var app;
 	var User;
-	var JwtTokenHelper;
-	var findOneStub, saveStub;
-	var stubJwtHelper;
+	var JwtUtilStub, createStub, revokeStub;
+	var findOneStub, saveStub;	
 	var controller;
 	var user_to_find;
 	before((done) => {				
@@ -31,26 +30,16 @@ describe("User authentication controller unit tests", () => {
 		User.findOne = findOneStub;		
 				
 		//jwt util mock
-		JwtTokenHelper = function () {
-			this.create = function (user, cb) {
-				cb(null, {
-					id: "fakeid",
-					username: "fakeusername",
-					token: "fakeToken"
-				});
-			}
-			this.revoke = function (user, cb) {
-				cb(null);
-			}
+		createStub = sinon.stub().yields(null, { token: "0254879456" });
+		revokeStub = sinon.stub().yields(null)
+		JwtUtilStub = {
+			create : createStub,
+			revoke : revokeStub
 		}
-
-		stubJwtHelper = sinon.stub(new JwtTokenHelper());
-		stubJwtHelper.create.yields(null, { token: "0254879456" });
-		stubJwtHelper.revoke.yields(null);
 
 		controller = rewire("../../../server/controllers/user.auth.controller");
 		controller.__set__("User", User);
-		controller.__set__("tokenHelper", stubJwtHelper);
+		controller.__set__("tokenHelper", JwtUtilStub);
 		done();
 	})
 	before(() => {
@@ -79,7 +68,7 @@ describe("User authentication controller unit tests", () => {
 				.end((err, res) => {
 					expect(res.status).to.be.equal(200);
 					expect(findOneStub).to.have.been.calledOnes;					
-					expect(stubJwtHelper.create.called).to.be.equal(true);	
+					expect(createStub.called).to.be.equal(true);	
 					expect(res.body).to.have.property('token');
 					expect(res.body.token).to.be.equal("0254879456");
 					done();
@@ -116,7 +105,7 @@ describe("User authentication controller unit tests", () => {
 		})
 		it("Should fail to sign in if error creating a token occurs", (done) => {
 			findOneStub.yields(null, user_to_find);
-			stubJwtHelper.create.yields(new Error("tokenerror"), null);
+			createStub.yields(new Error("tokenerror"), null);
 
 			var user_to_signin = { username: 'marcus', password: "12345678" };
 			request(app)
@@ -138,7 +127,7 @@ describe("User authentication controller unit tests", () => {
 				}
 			}
 			findOneStub.yields(null, user_to_find);
-			stubJwtHelper.create.yields(null, null);
+			createStub.yields(null, null);
 
 			var user_to_signin = { username: 'marcus', password: "12345678" };
 			request(app)
@@ -154,14 +143,14 @@ describe("User authentication controller unit tests", () => {
 	describe("Sign up user", () => {
 		it("Should sign up without problems", (done) => {
 			var user_to_signin = { username: 'marcus', password: '123456789', email: "john@doe.com" };
-			stubJwtHelper.create.yields(null, { token: "0254879456" });
+			createStub.yields(null, { token: "0254879456" });
 			request(app)
 				.post('/signup')
 				.send(user_to_signin)
 				.expect(200)
 				.end((err, res) => {
 					expect(res.status).to.be.equal(200);
-					expect(stubJwtHelper.create.called).to.be.equal(true);
+					expect(createStub.called).to.be.equal(true);
 					expect(res.body).to.have.property('token');
 					expect(res.body.token).to.be.equal("0254879456");
 					done();
@@ -181,7 +170,7 @@ describe("User authentication controller unit tests", () => {
 					expect(res.status).to.be.equal(400);
 					expect(res.body).to.to.have.property("key");
 					expect(res.body.message).to.to.have.length(2);					
-					expect(stubJwtHelper.create.called).to.be.equal(true);	
+					expect(createStub.called).to.be.equal(true);	
 					done();
 				});
 		});
@@ -194,7 +183,7 @@ describe("User authentication controller unit tests", () => {
 				.end((err, res) => {
 					expect(res.status).to.be.equal(200);
 					expect(res.text).to.be.equal("OK");
-					expect(stubJwtHelper.revoke.called).to.be.equal(true);	
+					expect(revokeStub.called).to.be.equal(true);	
 					done();
 				});
 		});
@@ -208,7 +197,7 @@ describe("User authentication controller unit tests", () => {
 				.end((err, res) => {
 					expect(res.status).to.be.equal(200);
 					expect(res.text).to.be.equal("OK");
-					expect(stubJwtHelper.revoke.called).to.be.equal(true);					
+					expect(revokeStub.called).to.be.equal(true);					
 					done();
 				});
 		});
