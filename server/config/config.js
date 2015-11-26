@@ -12,13 +12,14 @@ var path = require("path"),
 let config = {
     for: (env, done) => {
         let configPath = path.join(__dirname, './env');
+        env = env.toLowerCase().trim();
         try {
             fs.readdir(configPath, (err, files) => {
                 if (err) return done(err);
                 !!files && files.forEach((file) => {
                     if (file.match(new RegExp(env))) {
                         nconf.overrides(require(configPath + '/' + file));
-                        console.log(chalk.green(
+                        console.log(chalk.underline(
                             'Configuration for ' +
                             chalk.white.bgBlue(env.toUpperCase()) +
                             ' mode was built'
@@ -35,7 +36,7 @@ let config = {
 
 /**
  * Default app configuration
- * Use: config.configure.for("Development",(err)=>{..})
+ * Use: config.configure.for("development",(err)=>{..})
  */
 Object.defineProperty(config, "configure", {
     get: () => {

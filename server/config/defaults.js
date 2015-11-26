@@ -19,5 +19,9 @@ module.exports = {
 				pass: 'tomaco982'
 			}
 		}
+	},
+	redis: {
+		httpPort: 6379,
+		host: "localhost"
 	}
 };

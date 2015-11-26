@@ -15,7 +15,7 @@ module.exports = function () {
 		}, function (accessToken, refreshToken, profile, done) {
 			process.nextTick(() => {
 				// find the user in the database based on github id
-				User.findOne({authProvider: "github", 'extOAuth.providerData.id': profile.id}, function (err, user) {
+				User.findOne({authProvider: "github", 'extOAuth.providerData.id': profile.id}, (err, user) => {
 					// if there is an error, stop everything and return that
 					// ie an error connecting to the database
 					if (err)

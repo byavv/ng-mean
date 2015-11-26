@@ -1,7 +1,7 @@
 var mongoose = require("mongoose"),
     passport = require("passport"),
     _ = require("lodash"),
-    tokenHelper = require("../utils/jwt.helper"),
+    tokenHelper = require("../libs/jwt.util"),
     User = mongoose.model("User");
 
 module.exports = {
@@ -34,7 +34,7 @@ module.exports = {
                         }
                         return res.status(200).json(result);
                     });
-                } 
+                }
             });
         } catch (error) {
             return res.status(500).send({ key: "error_500" });
@@ -108,19 +108,6 @@ module.exports = {
                         user: result
                     });
                 });
-                /* req.login(user, function (err) {
-                     if (err) {
-                         return res.redirect('/signin');
-                     }
-                     tokenHelper.create(user, function (err, result) {
-                         if (err) {
-                             return res.redirect(redirectURL || '/');
-                         }
-                         return res.render("authSuccess", {
-                             user: result
-                         });
-                     });
-                 });*/
             })(req, res, next);
         };
     }

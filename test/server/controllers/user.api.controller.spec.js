@@ -137,9 +137,7 @@ describe("User api controller tests", () => {
 				});
 		})
 	})
-	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	
-
+		
 	describe("Account and profile callbacks tests", () => {
 		beforeEach(() => {
 			//findOneStub = sinon.stub().yields(null, user_to_find);

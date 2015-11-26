@@ -13,7 +13,7 @@ exports.configure = function (done) {
 	mongoose.connect(nconf.get("db"));
 	let db = mongoose.connection;
 	db.on('error', (err) => {
-		console.log(chalk.red("connection error" + err));
+		console.log(chalk.red("connection error " + err));
 	});
 	db.once('open', () => {
 		console.log(chalk.green("Database opened"));

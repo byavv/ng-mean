@@ -2,12 +2,8 @@ var request = require('supertest'),
 	express = require('express'),
 	sinon = require("sinon"),
 	rewire = require("rewire"),
-	chai = require("chai"),
-	//mongooseConf = require("../../../server/config/mongoose"),
-	
-
-	expressConf = require("../../../server/config/express"),
-	//mongoose = require("mongoose"),
+	chai = require("chai"),	
+	expressConf = require("../../../server/config/express"),	
 	assert = chai.assert,
 	expect = chai.expect;
 
@@ -70,8 +66,6 @@ describe("User authentication controller unit tests", () => {
 		app.post('/signin', controller.signin);
 		app.post('/me', controller.me);
 	});
-
-
 	describe("Sign in user", () => {
 		afterEach(()=>{
 			findOneStub.reset();

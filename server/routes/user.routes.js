@@ -1,6 +1,6 @@
 'use strict';
 
-var tokenHelper = require('../utils/jwt.helper'),
+var tokenHelper = require('../libs/jwt.util'),
 	jwt = require("express-jwt"),
 	nconf = require("nconf"),
 	passport = require('passport'),

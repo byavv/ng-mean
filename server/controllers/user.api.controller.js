@@ -48,7 +48,7 @@ module.exports = {
                 };
                 return res.status(200).json(account);
             }
-        }); 
+        });
     },
     /**
      * Update user account data
@@ -168,16 +168,16 @@ module.exports = {
                     name: user.username,
                     appName: nconf.get("appName"),
                     url: 'http://' + req.headers.host + '/api/reset/' + token
-                }, (err, emailHTML) => {
-                    done(err, emailHTML, user);
+                }, (err, emailContent) => {
+                    done(err, emailContent, user);
                 });
             },
             // send it
-            (emailHTML, user, done) => {
+            (emailContent, user, done) => {
                 mailHelper.sendResetMail(
                     user.email,                 // to
                     nconf.get("mailer").from,   // from
-                    emailHTML,                  // what
+                    emailContent,                  // what
                     nconf.get("mailer").options,// options
                     (err) => {
                         if (!err)

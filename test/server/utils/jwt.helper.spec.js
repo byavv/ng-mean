@@ -2,6 +2,7 @@ var jwt = require('jsonwebtoken');
 var chai = require('chai'),
   nconf = require("nconf"),
   sinon = require("sinon"),
+  rewire = require("rewire"),
   assert = chai.assert,
   expect = chai.expect;
 
@@ -12,12 +13,19 @@ describe('JWT util tests', () => {
     setexStub,
     expireStub;
   before((done) => {
-    var redisMock = {};
+    var mockRedisClient = {};
     setexStub = sinon.stub().yields(null);
     expireStub = sinon.stub().yields(null, "fake_token_replyed_by_redis");
-    redisMock.setex = setexStub;
-    redisMock.expire = expireStub;
-    jwtHelper = require("../../../server/utils/jwt.helper")(redisMock);
+    mockRedisClient.setex = setexStub;
+    mockRedisClient.expire = expireStub;
+    mockRedisClient.on = sinon.stub().yields(null);
+    mockRedisClient.once = sinon.stub().yields(null);
+    
+    var mockRedis = {};
+    mockRedis.createClient = sinon.stub().returns(mockRedisClient);
+    
+    jwtHelper = rewire("../../../server/utils/jwt.helper");
+    jwtHelper.__set__("redis", mockRedis);    
     done();
   });
   it('Should create new ', (done) => {

@@ -1,5 +1,6 @@
 /// <reference path="../../client/typings/app.d.ts" />
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../typings/jasmine/jasmine.d.ts" />
+
 
 var appModule = require("../../client/app/app.module");
 
