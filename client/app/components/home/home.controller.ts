@@ -17,23 +17,6 @@ export default class HomeController {
      * Initialize controller
      */
     private init(): void {
-        this.title = "Home controller";
-        this.$timeout(() => {
-            this.title = "TimeOut changed";
-            this.myColor = this.colors[2];
-        }, 3000);
-
-        this.colors = [
-            { name: "black", shade: "dark" },
-            { name: "white", shade: "light", notAnOption: true },
-            { name: "red", shade: "dark" },
-            { name: "blue", shade: "dark", notAnOption: true },
-            { name: "yellow", shade: "light'", notAnOption: false }
-        ];
-        this.colors = _.filter(this.colors, { shade: "dark" });
-        this.colors.map((color: any) => {
-            Object.defineProperty(color, "used", { value: "my" });
-            return color;
-        });
+       
     }
 }

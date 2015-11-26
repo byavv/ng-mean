@@ -28,3 +28,4 @@ describe("Unit: Testing App Module", () => {
        // mockScope.$digest();
     });
 });
+
