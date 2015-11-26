@@ -6,6 +6,7 @@ var async = require("async"),
   chalk = require("chalk"),
   config = require("./config/config"),
   mongooseConfig = require("./config/mongoose"),
+  //redisConfig = require("./config/redis"),
   nconf = require("nconf");
 
 async.waterfall([
@@ -23,12 +24,26 @@ async.waterfall([
   if (err) console.log(err);
   else {
     let app = express();
-    require("./config/passport")();
-    require("./config/express")(app);
-    require("./routes/routes")(app);
+    try {
+      let client = require("./config/redis");
+      if (env != "production") {
+        client.flushall((err) => {
+          if (err) {
+            throw err;
+          }
+          console.info(chalk.green("Redis cleaned "));
+        });
+      }
+      require("./config/passport")();
+      require("./config/express")(app);
+      require("./routes/routes")(app);
 
-    app.listen(nconf.get("httpPort"));
-    console.log(chalk.green("Server started on http port: " + nconf.get("httpPort")));
+      app.listen(nconf.get("httpPort"));
+      console.info(chalk.green("Server started on http port: " + nconf.get("httpPort")));
+    } catch (error) {
+      console.error(chalk.bgRed.white("App start error " + error));
+    }
+
   }
 });
 
