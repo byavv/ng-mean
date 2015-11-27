@@ -4,31 +4,29 @@
  * Authentication service to manage authentication/authorization processes
  */
 export default class AuthService implements mts.IAuthService {
-    public static serviceId:string = "authService";
+    public static serviceId: string = "authService";
     public static $inject = [
         "$http",
-        "identityService",
-        "localStorageService"
+        "identityService"
     ];
 
-    constructor(private $http:ng.IHttpService,
-                private identityService:mts.IIdentityService,
-                private localStorageService:angular.local.storage.ILocalStorageService) {
+    constructor(private $http: ng.IHttpService,
+        private identityService: mts.IIdentityService) {
     }
 
-    public signUp(userData:any):ng.IPromise<any> {
-        return this.$http.post("/auth/signup", userData).then((response:any):void => {
+    public signUp(userData: any): ng.IPromise<any> {
+        return this.$http.post("/auth/signup", userData).then((response: any): void => {
             if (response.data) {
                 this.identityService.user = response.data;
             }
         });
     }
 
-    public signIn(username:string, password:string):ng.IPromise<any> {
+    public signIn(username: string, password: string): ng.IPromise<any> {
         return this.$http.post("/auth/signin", {
             username: username,
             password: password
-        }).then((response:any):void => {
+        }).then((response: any): void => {
             if (response.data) {
                 this.identityService.user = response.data;
                 return response.data;
@@ -36,8 +34,8 @@ export default class AuthService implements mts.IAuthService {
         });
     }
 
-    public signOut():ng.IPromise<any> {
-        return this.$http.post("/auth/signout", {logout: true}).then(():void => {
+    public signOut(): ng.IPromise<any> {
+        return this.$http.post("/auth/signout", { logout: true }).then((): void => {
             this.identityService.user = null;
         });
     }
@@ -46,7 +44,7 @@ export default class AuthService implements mts.IAuthService {
      * the method will be called with current token. If token is valid and a user authorized for routes
      * http interceptor pass this request, in other case - send to login page.
      */
-    public isAuthorized(roles: Array<string>):ng.IPromise<any> {
-        return this.$http.post("/auth/me", {require: roles});
+    public isAuthorized(roles: Array<string>): ng.IPromise<any> {
+        return this.$http.post("/auth/me", { require: roles });
     }
 }

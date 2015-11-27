@@ -17,9 +17,7 @@ describe('JWT util tests', () => {
     setexStub = sinon.stub().yields(null);
     expireStub = sinon.stub().yields(null, "fake_token_replyed_by_redis");
     mockRedisClient.setex = setexStub;
-    mockRedisClient.expire = expireStub;
-    mockRedisClient.on = sinon.stub().yields(null);
-    mockRedisClient.once = sinon.stub().yields(null);
+    mockRedisClient.expire = expireStub;    
 
     jwtHelper = rewire("../../../server/libs/jwt.util");
     jwtHelper.__set__("client", mockRedisClient);

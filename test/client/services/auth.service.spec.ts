@@ -20,9 +20,7 @@ describe('pageMetaService', () => {
 
         angular.mock.inject(($injector: ng.auto.IInjectorService) => {
             identityService = $injector.get<mts.IIdentityService>('identityService');
-            httpBackend = $injector.get<ng.IHttpBackendService>('$httpBackend');
-            authRequestHandler = httpBackend.when('GET', '/auth.py')
-                .respond({ userId: 'userX' }, { 'A-Token': 'xxx' });
+            httpBackend = $injector.get<ng.IHttpBackendService>('$httpBackend');           
             authService = $injector.instantiate(serv);
         });
     });
