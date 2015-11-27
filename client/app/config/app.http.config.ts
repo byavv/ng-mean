@@ -14,32 +14,33 @@ export function httpInterceptor($q: ng.IQService,
             return config;
         },
         response: function(response: ng.IHttpPromiseCallbackArg<any>): ng.IHttpPromiseCallbackArg<any> {
-            let refreshToken = response.headers("refreshToken");
+            /*let refreshToken = response.headers("refreshToken");
             if (!!refreshToken) {
                 identityService.refreshToken(refreshToken);
-            }
+            }*/
             return response;
-        },
+        },       
         requestError: function(rejection: any): ng.IPromise<any> {
+            //the connection was closed
             if (rejection.status === 0) {
-                // todo show directive global
+                // todo: show user about error, may be using popup window
                 // smth like check your connection
                 return;
             }
             return $q.reject(rejection);
         },
         responseError: function(rejection: any): ng.IPromise<any> {
-            let refreshToken = rejection.headers("refreshToken");
+            /*let refreshToken = rejection.headers("refreshToken");
             if (!!refreshToken) {
                 identityService.refreshToken(refreshToken);
-            }
+            }*/
             if (!!rejection && rejection.status === 401) {
                 identityService.user = null;
                 $location.path("/signin");
             }
             if (!!rejection && rejection.status === 500) {
-                // todo show directive global
-                // smth like unexpected server error
+                // todo: show user about error, may be using popup window
+                // smth like check your connection
             }
             return $q.reject(rejection);
         }

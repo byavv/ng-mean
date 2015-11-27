@@ -8,7 +8,7 @@ var authService: any,
     authRequestHandler,
     httpBackend: ng.IHttpBackendService;
 
-describe('pageMetaService', () => {
+describe('Services', () => {
     beforeEach(() => {
         angular.mock.module(module.name, ($provide) => {
             $provide.factory("identityService", () => {
@@ -29,7 +29,7 @@ describe('pageMetaService', () => {
         httpBackend.verifyNoOutstandingRequest();
     });
 
-    describe('Service operation tests', () => {
+    describe('Authentication service operations tests', () => {
         it('Identity service should be defined', () => {
             expect(authService.identityService).toBeDefined();
         });

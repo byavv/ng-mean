@@ -7,32 +7,38 @@ var _identityService: mts.IIdentityService,
     _authService: mts.IAuthService,
     _localStorageService: angular.local.storage.ILocalStorageService,
     _authRequestHandler,
+    _location: any,
+    _rootScope: ng.IRootScopeService,
+    _route: ng.route.IRouteService,
     _httpInterceptor,
     _httpProvider: ng.IHttpProvider,
     _httpBackend: ng.IHttpBackendService;
 
-describe('pageMetaService', () => {
+describe('App module', () => {
 
-    beforeEach(() => {
-        //access to module provider (config stage)
+    beforeEach(() => {       
         angular.mock.module(mod.name, ($provide: ng.auto.IProvideService, $httpProvider: ng.IHttpProvider) => {
-            _httpProvider = $httpProvider;
-            $provide.factory("identityService", () => {
-                return {
-                    user: {},
-                    update: jasmine.createSpy("update", () => { })
-                };
-            });
-
-        });
-    
-        //we can inject here for working with dependencies in future
+            _httpProvider = $httpProvider;           
+        });    
+      
         inject(($injector: ng.auto.IInjectorService) => {
             _identityService = $injector.get<mts.IIdentityService>('identityService');
             _localStorageService = $injector.get<angular.local.storage.ILocalStorageService>('localStorageService');
+            _location = $injector.get<any>('$location');
+            _rootScope = $injector.get<ng.IRootScopeService>('$rootScope');
+            _route = $injector.get<ng.route.IRouteService>('$route');
+
             spyOn(_localStorageService, "get").and.callThrough();
+            spyOn(_localStorageService, "remove").and.callThrough();
+
+            spyOn(_identityService, "update").and.callThrough();
+            spyOn(_identityService, "isAuthenticated").and.callThrough();
+
             _authService = $injector.get<mts.IAuthService>('authService');
             _httpBackend = $injector.get<ng.IHttpBackendService>('$httpBackend');
+
+            spyOn(_authService, "isAuthorized").and.callThrough();           
+            
             /*_authRequestHandler = _httpBackend.when('GET', '/auth/signup')
                 .respond({ id: 'fakeid', token: 'faketoken' }, { 'A-Token': 'xxx' });*/
         });
@@ -43,14 +49,12 @@ describe('pageMetaService', () => {
         _httpBackend.verifyNoOutstandingRequest();
     });
 
-    describe('Service operation tests', () => {
+    describe('Interceptor behaviour tests', () => {
         it("Interceptor sould be defined", () => {
             expect(_httpProvider).toBeDefined();
             expect(_httpProvider.interceptors).toBeDefined();
         });
-        it("Should update identity after start in run block", () => {
-            expect(_identityService.update).toHaveBeenCalledWith(false);
-        });
+
         it("Should set headers when any request", () => {
             _localStorageService.set("authorizationData", { token: "faketoken" });
 
@@ -76,10 +80,8 @@ describe('pageMetaService', () => {
                 expect(_localStorageService.get).toHaveBeenCalledWith("authorizationData");
             });
             _httpBackend.flush();
-        })
-
-
-        it("Should require auth data for request", () => {
+        });
+        it("Should require auth data from storage to commit http request", () => {
             _httpBackend
                 .expectPOST("/auth/signup")
                 .respond(200, "OK");
@@ -88,5 +90,71 @@ describe('pageMetaService', () => {
             });
             _httpBackend.flush();
         });
+        it("Should reset auth data when 401 and redirect to authentication page", () => {
+            _identityService.user = { _id: "123", token: "faketoken" }
+            _httpBackend
+                .expectPOST("/auth/me", { require: ["user"] })
+                .respond(401, '');
+            _authService.isAuthorized(["user"]).then(() => { }, () => {
+                expect(_localStorageService.get).toHaveBeenCalledWith("authorizationData");
+                expect(_identityService.user).toBeNull();
+                expect(_location.path()).toBe("/signin");
+            });
+            _httpBackend.flush();
+        });
     });
+    describe("Router behaviour tests", () => {
+        it("Should redirect to singin when trying to get restricted route without authentication", () => {
+            //user goes from "/" to any restricted route
+            _identityService.user = null;
+            _location.path("/");
+            _rootScope.$broadcast('$routeChangeStart', (null, { authorized: true }));
+            expect(_identityService.isAuthenticated).toHaveBeenCalled();
+            expect(_location.path()).toBe("/signin");
+        })
+        it("Should pass route change for non-protected route", () => {
+            //user goes from "/" to any public route
+            _identityService.user = null;
+            _location.path("/");
+            _rootScope.$broadcast('$routeChangeStart', (null, { authorized: false }));
+            expect(_identityService.isAuthenticated).toHaveBeenCalled();
+            expect(_location.path()).toBe("/");
+        })
+        it("Should let user get restricted route if authorized", () => {           
+            _location.path("/");
+            _identityService.user = {id:"fakeid", roles:["user"], token:"faketoken"}
+            _rootScope.$broadcast('$routeChangeStart', (null, { authorized: true }));
+            expect(_identityService.isAuthenticated).toHaveBeenCalled();
+            expect(_location.path()).toBe("/");
+        })
+        it("Should redirect to home page when user try to get singin page again", () => {     
+            _identityService.user = {id:"fakeid", roles:["user"], token:"faketoken"}      
+            _location.path("/singin");           
+            _rootScope.$broadcast('$routeChangeStart', (null, { authorized: false }));
+            expect(_identityService.isAuthenticated).toHaveBeenCalled();
+            expect(_location.path()).toBe("/");
+        })
+    })
 });
+
+describe("App module", () => {
+    beforeEach(function() {
+        angular.mock.module(mod.name, ($provide) => {
+            $provide.factory("identityService", () => {
+                return {
+                    user: {},
+                    update: jasmine.createSpy("update"),
+                };
+            });
+        });
+
+        inject(($injector: ng.auto.IInjectorService) => {
+            _identityService = $injector.get<mts.IIdentityService>('identityService');
+        })
+    });
+    describe('Run block', () => {
+        it("Should update identity after start in run block", () => {
+            expect(_identityService.update).toHaveBeenCalledWith(false);
+        });
+    })
+})
