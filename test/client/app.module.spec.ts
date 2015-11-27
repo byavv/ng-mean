@@ -7,35 +7,34 @@ var _identityService: mts.IIdentityService,
     _authService: mts.IAuthService,
     _localStorageService: angular.local.storage.ILocalStorageService,
     _authRequestHandler,
-    _location: any,
+    _location: ng.ILocationService,
     _rootScope: ng.IRootScopeService,
     _route: ng.route.IRouteService,
     _httpInterceptor,
     _httpProvider: ng.IHttpProvider,
     _httpBackend: ng.IHttpBackendService;
 
-describe('App module', () => {
+describe('Testing app module', () => {
 
-    beforeEach(() => {       
+    beforeEach(() => {
         angular.mock.module(mod.name, ($provide: ng.auto.IProvideService, $httpProvider: ng.IHttpProvider) => {
-            _httpProvider = $httpProvider;           
-        });    
-      
+            _httpProvider = $httpProvider;
+        });
+
         inject(($injector: ng.auto.IInjectorService) => {
             _identityService = $injector.get<mts.IIdentityService>('identityService');
             _localStorageService = $injector.get<angular.local.storage.ILocalStorageService>('localStorageService');
-            _location = $injector.get<any>('$location');
+            _location = $injector.get<ng.ILocationService>('$location');
             _rootScope = $injector.get<ng.IRootScopeService>('$rootScope');
             _route = $injector.get<ng.route.IRouteService>('$route');
+            _authService = $injector.get<mts.IAuthService>('authService');
+            _httpBackend = $injector.get<ng.IHttpBackendService>('$httpBackend');
 
             spyOn(_localStorageService, "get").and.callThrough();
             spyOn(_localStorageService, "remove").and.callThrough();
 
             spyOn(_identityService, "update").and.callThrough();
             spyOn(_identityService, "isAuthenticated").and.callThrough();
-
-            _authService = $injector.get<mts.IAuthService>('authService');
-            _httpBackend = $injector.get<ng.IHttpBackendService>('$httpBackend');
 
             spyOn(_authService, "isAuthorized").and.callThrough();           
             
@@ -108,36 +107,54 @@ describe('App module', () => {
             //user goes from "/" to any restricted route
             _identityService.user = null;
             _location.path("/");
-            _rootScope.$broadcast('$routeChangeStart', (null, { authorized: true }));
-            expect(_identityService.isAuthenticated).toHaveBeenCalled();
-            expect(_location.path()).toBe("/signin");
+            _rootScope.$on("$routeChangeStart", () => {
+                expect(_identityService.isAuthenticated).toHaveBeenCalled();
+                expect(_location.path()).toBe("/signin");
+            })
+            _rootScope.$emit('$routeChangeStart', { authorized: true });
+
         })
         it("Should pass route change for non-protected route", () => {
             //user goes from "/" to any public route
             _identityService.user = null;
             _location.path("/");
-            _rootScope.$broadcast('$routeChangeStart', (null, { authorized: false }));
-            expect(_identityService.isAuthenticated).toHaveBeenCalled();
-            expect(_location.path()).toBe("/");
+            _rootScope.$on("$routeChangeStart", () => {
+                expect(_identityService.isAuthenticated).toHaveBeenCalled();
+                expect(_location.path()).toBe("/");
+            })
+            _rootScope.$emit('$routeChangeStart', { authorized: false });
         })
-        it("Should let user get restricted route if authorized", () => {           
+        it("Should not redirect authenticated user trying get restricted page", () => {
             _location.path("/");
-            _identityService.user = {id:"fakeid", roles:["user"], token:"faketoken"}
-            _rootScope.$broadcast('$routeChangeStart', (null, { authorized: true }));
-            expect(_identityService.isAuthenticated).toHaveBeenCalled();
-            expect(_location.path()).toBe("/");
+            _identityService.user = { id: "fakeid", roles: ["user"], token: "faketoken" }
+            _rootScope.$on("$routeChangeStart", () => {
+                expect(_identityService.isAuthenticated).toHaveBeenCalled();
+                expect(_location.path()).toBe("/");
+            })
+            _rootScope.$emit('$routeChangeStart', { authorized: true });
         })
-        it("Should redirect to home page when user try to get singin page again", () => {     
-            _identityService.user = {id:"fakeid", roles:["user"], token:"faketoken"}      
-            _location.path("/singin");           
-            _rootScope.$broadcast('$routeChangeStart', (null, { authorized: false }));
-            expect(_identityService.isAuthenticated).toHaveBeenCalled();
-            expect(_location.path()).toBe("/");
+        it("Should redirect to home page when user try to get singin page being authenticated", () => {
+            _identityService.user = { id: "fakeid", roles: ["user"], token: "faketoken" }
+            _location.path("/singin");
+            _rootScope.$on("$routeChangeStart", () => {
+                expect(_identityService.isAuthenticated).toHaveBeenCalled();
+                expect(_location.path()).toBe("/");
+            })
+            _rootScope.$emit('$routeChangeStart', { authorized: false });
+        })
+        it("Should redirect to singin page if router resolve return 401", () => {
+            _identityService.user = null;
+            _location.path("/profile");
+
+            _rootScope.$on("$routeChangeError", () => {
+                expect(_location.path()).toBe("/signin");
+            })
+            _rootScope.$emit('$routeChangeError', null, null, '401');
         })
     })
 });
 
-describe("App module", () => {
+describe("Testing app module", () => {
     beforeEach(function() {
         angular.mock.module(mod.name, ($provide) => {
             $provide.factory("identityService", () => {
@@ -147,7 +164,6 @@ describe("App module", () => {
                 };
             });
         });
-
         inject(($injector: ng.auto.IInjectorService) => {
             _identityService = $injector.get<mts.IIdentityService>('identityService');
         })

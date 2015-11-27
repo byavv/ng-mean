@@ -8,7 +8,7 @@ var _identityService: mts.IIdentityService,
     _localStorageService: any,
     _httpBackend: ng.IHttpBackendService;
 
-describe('Services', () => {
+describe('Testing services', () => {
     beforeEach(() => {
         angular.mock.module(module.name, ($provide) => {
             $provide.factory("localStorageService", () => {

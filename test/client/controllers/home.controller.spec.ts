@@ -6,7 +6,7 @@ import ctrl from "../../../client/app/components/home/home.controller"
 
 var mockScope;
 var controller;
-describe("Controllers", () => {
+describe("Testing controllers", () => {
     beforeEach(() => {
         angular.mock.module(module.name);
         angular.mock.inject(($controller: ng.IControllerService, $rootScope: ng.IRootScopeService, $timeout: ng.ITimeoutService) => {

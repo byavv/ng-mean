@@ -22,11 +22,11 @@ export function httpInterceptor($q: ng.IQService,
         },       
         requestError: function(rejection: any): ng.IPromise<any> {
             //the connection was closed
-            if (rejection.status === 0) {
+            //if (rejection.status === 0) {
                 // todo: show user about error, may be using popup window
                 // smth like check your connection
-                return;
-            }
+            //    return;
+            //}
             return $q.reject(rejection);
         },
         responseError: function(rejection: any): ng.IPromise<any> {
