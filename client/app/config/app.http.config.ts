@@ -1,11 +1,11 @@
-function httpInterceptor ($q:ng.IQService,
-                          $location:ng.ILocationService,
-                          identityService:mts.IIdentityService,
-                          localStorageService:angular.local.storage.ILocalStorageService): ng.IHttpInterceptor {
+export function httpInterceptor($q: ng.IQService,
+    $location: ng.ILocationService,
+    identityService: mts.IIdentityService,
+    localStorageService: angular.local.storage.ILocalStorageService): ng.IHttpInterceptor {
     return {
-        request: function (config:ng.IRequestConfig):ng.IRequestConfig {
+        request: function(config: ng.IRequestConfig): ng.IRequestConfig {
             config.headers = config.headers || {};
-            let auth:any = localStorageService.get("authorizationData");
+            let auth: any = localStorageService.get("authorizationData");
             if (auth && !!auth.token) {
                 angular.extend(config.headers, {
                     Authorization: "Bearer " + auth.token
@@ -13,14 +13,14 @@ function httpInterceptor ($q:ng.IQService,
             }
             return config;
         },
-        response: function (response:ng.IHttpPromiseCallbackArg<any>):ng.IHttpPromiseCallbackArg<any> {
+        response: function(response: ng.IHttpPromiseCallbackArg<any>): ng.IHttpPromiseCallbackArg<any> {
             let refreshToken = response.headers("refreshToken");
-            if(!!refreshToken) {
+            if (!!refreshToken) {
                 identityService.refreshToken(refreshToken);
             }
             return response;
         },
-        requestError: function (rejection:any):ng.IPromise<any> {
+        requestError: function(rejection: any): ng.IPromise<any> {
             if (rejection.status === 0) {
                 // todo show directive global
                 // smth like check your connection
@@ -28,9 +28,9 @@ function httpInterceptor ($q:ng.IQService,
             }
             return $q.reject(rejection);
         },
-        responseError: function (rejection:any):ng.IPromise<any> {
+        responseError: function(rejection: any): ng.IPromise<any> {
             let refreshToken = rejection.headers("refreshToken");
-            if(!!refreshToken) {
+            if (!!refreshToken) {
                 identityService.refreshToken(refreshToken);
             }
             if (!!rejection && rejection.status === 401) {
@@ -45,7 +45,7 @@ function httpInterceptor ($q:ng.IQService,
         }
     };
 }
-httpInterceptor.$inject = [ "$q", "$location", "identityService", "localStorageService"];
+httpInterceptor.$inject = ["$q", "$location", "identityService", "localStorageService"];
 
 export function httpConfig($httpProvider: ng.IHttpProvider): any {
 

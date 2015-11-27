@@ -15,16 +15,16 @@ require("../assets/bootstrap-yeti-theme.css");
 // custom styles
 require("../assets/index");
 
- 
-require("angular-local-storage"); 
+
+require("angular-local-storage");
 
 import componentsModule from "./components/components.module";
 import directivesModule from "./directives/directives.module";
 import sharedModule from "./shared/shared.module";
 import servicesModule from "./services/services.module";
-import * as httpConfig from "./config/app.http.config";
-import * as routerConfig from "./config/app.router.config";
-import * as run from "./app.run";
+import {httpConfig} from "./config/app.http.config";
+import {routeConfig, locationConfig} from "./config/app.router.config";
+import {run} from "./app.run";
 
 
 export default angular.module("app", [
@@ -33,7 +33,7 @@ export default angular.module("app", [
     require("angular-animate"),			// ngAnimate
     //require("angular-resource"),        // ngResource
     require("angular-messages"),        // ngMessages
-    //require("angular-cookies"),         // ngCookies
+//require("angular-cookies"),         // ngCookies
     "LocalStorageModule",
 
 
@@ -42,10 +42,10 @@ export default angular.module("app", [
     sharedModule.name,					//
     servicesModule.name                 //
 ])
-    .config(routerConfig.routeConfig)
-    .config(routerConfig.locationConfig)
-    .config(httpConfig.httpConfig)
-    .run(run.run)
+    .config(routeConfig)
+    .config(locationConfig)
+    .config(httpConfig)
+    .run(run)
     .value("config", require("../../shared/index"));
 
 if (_DEV_MODE) {
