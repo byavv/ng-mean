@@ -2,19 +2,19 @@
  *  Directive to hide elements if user is unauthorized for role.
  *  Usage: '<div restrict-ui permit-for="user, admin">ONLY ADMIN CAN SEE IT</div>'
  */
-function restrictedUIDirective (identityService: mts.IIdentityService): ng.IDirective {
+function restrictedUIDirective(identityService: mts.IIdentityService): ng.IDirective {
     return {
         restrict: "A",
-        link: function (scope:any, element:ng.IAugmentedJQuery, attrs:any): void {
+        link: function(scope: any, element: ng.IAugmentedJQuery, attrs: any): void {
             let roles;
-            let show = ()=> {
+            let show = () => {
                 element.removeClass("hidden");
             };
 
-            let hide = ()=> {
+            let hide = () => {
                 element.addClass("hidden");
             };
-            let setVisibility = (forRoles:Array<string>):void=> {
+            let setVisibility = (forRoles: Array<string>): void=> {
                 if (identityService.isAuthorized(forRoles)) {
                     show();
                 } else {
@@ -22,9 +22,9 @@ function restrictedUIDirective (identityService: mts.IIdentityService): ng.IDire
                 }
             };
             attrs.$observe("permitFor", (value: any): void=> {
-                if (value) {
+                if (value && value.length) {
                     roles = value.split(",");
-                    if (roles.length) {
+                    if (roles) {
                         setVisibility(roles);
                     }
                 }
@@ -32,7 +32,11 @@ function restrictedUIDirective (identityService: mts.IIdentityService): ng.IDire
             scope.$watch((): boolean => {
                 return identityService.isAuthenticated();
             }, (): void => {
-                setVisibility(roles);
+                if (roles) {
+                    setVisibility(roles);
+                } else {
+                    hide();
+                }
             });
         }
     };
