@@ -2,7 +2,7 @@
 require("./profile.view.html");
 export default class ProfileController {
     public static controllerId = "profileCtrl";
-    public static $inject = ["usersService", "$location", "$scope", "$timeout", "serverMessageHandler"];
+    public static $inject = ["usersService", "$scope", "$timeout", "serverMessageHandler"];
 
     private account:any = null;
     private profile:any = null;
@@ -17,8 +17,7 @@ export default class ProfileController {
     private isPersonalDataOpen;
     private isAccountDataOpen;
 
-    constructor(private usersService:mts.IUsersService,
-                private $location:ng.ILocationService,
+    constructor(private usersService:mts.IUsersService,                
                 private $scope:ng.IScope,
                 private $timeout:ng.ITimeoutService,
                 private serverMessageHandler:mts.IServerMessageHandler) {
@@ -28,7 +27,7 @@ export default class ProfileController {
                     if (!this.profile) {
                         this.loading = true;
                         this.usersService.getProfile().then((res:any)=> {
-                            if (res) {
+                            if (res) {                                
                                 // slow it down a bit
                                 this.$timeout(()=> {
                                     this.profile = res;
