@@ -189,11 +189,12 @@ module.exports = {
             console.log(err);
             if (err) return next(err);
         });
-    },
+    }, 
     /**
 	 * Change user password using reset password form
 	 */
     resetForgotPassword: function (req, res) {
+        //var { newPassword, token } = req.body; 
         var newPassword = req.body.password;
         var token = req.body.token;
         if (newPassword && token) {

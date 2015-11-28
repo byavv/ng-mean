@@ -43,7 +43,7 @@ describe("User api controller tests", () => {
 		controller.__set__("User", mockUser);
 		controller.__set__("mailHelper", mockMailHelper);
 
-		done();
+		done(); 
 	})
 	before(() => {
 		app = express();
