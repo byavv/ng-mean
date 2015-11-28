@@ -21,10 +21,8 @@ describe('Testing services', () => {
         });
 
         angular.mock.inject(($injector: ng.auto.IInjectorService) => {
-            _identityService = $injector.get<mts.IIdentityService>('identityService');
-            _identityService = $injector.get<mts.IIdentityService>('identityService');
-            _httpBackend = $injector.get<ng.IHttpBackendService>('$httpBackend');           
-           
+            _identityService = $injector.get<mts.IIdentityService>('identityService');          
+            _httpBackend = $injector.get<ng.IHttpBackendService>('$httpBackend'); 
         });
     });
     afterEach(function() {
