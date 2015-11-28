@@ -8,5 +8,5 @@ module.exports = redis.createClient(nconf.get("redis"))
 		throw err;
 	})
 	.on('connect', () => {
-		console.info(chalk.green("Connected to redis on port: " + nconf.get("redis").port));
+		console.info(chalk.green(`Connected to redis on port: ${nconf.get("redis").port}`));
 	});

@@ -48,6 +48,7 @@ module.exports = {
     signin: function (req, res, next) {
         var username = req.body.username;
         var password = req.body.password;
+        //var {username, password} = req.body
         if (!!username && !!password) {
             User.findOne({ username: username }, (err, user) => {
                 if (err) return res.status(500).send({ key: "error_500", message: err.message });

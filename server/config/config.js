@@ -20,9 +20,7 @@ let config = {
                     if (file.match(new RegExp(env))) {
                         nconf.overrides(require(configPath + '/' + file));
                         console.log(chalk.underline(
-                            'Configuration for ' +
-                            chalk.white.bgBlue(env.toUpperCase()) +
-                            ' mode was built'
+                            `Configuration for ${chalk.white.bgBlue(env.toUpperCase())} mode was built`
                             ));
                         done(null);
                     }
@@ -41,7 +39,7 @@ let config = {
 Object.defineProperty(config, "configure", {
     get: () => {
         nconf.argv().env();
-        nconf.use('memory');
+        nconf.use("memory");
         nconf.defaults(defaultConf);
         return config;
     }

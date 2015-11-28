@@ -40,9 +40,9 @@ async.waterfall([
       require("./routes/routes")(app);
 
       app.listen(nconf.get("httpPort"));
-      console.info(chalk.green("Server started on http port: " + nconf.get("httpPort")));
+      console.info(chalk.green(`Server started on http port:  ${nconf.get("httpPort") }`));
     } catch (error) {
-      console.error(chalk.bgRed.white("App start error " + error));
+      console.error(chalk.bgRed.white(`App start error ${error}`));
     }
   }
 });

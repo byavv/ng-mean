@@ -167,7 +167,7 @@ module.exports = {
                 res.render('templates/reset-password-email', {
                     name: user.username,
                     appName: nconf.get("appName"),
-                    url: 'http://' + req.headers.host + '/api/reset/' + token
+                    url: `http://${req.headers.host}/api/reset/${token}`
                 }, (err, emailContent) => {
                     done(err, emailContent, user);
                 });

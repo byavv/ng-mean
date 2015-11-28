@@ -28,7 +28,7 @@ exports.configure = function (done) {
 				!!modelsFiles && modelsFiles.forEach((file) => {
 					if (/(.*)\.(js$)/.test(file)) {
 						var model = require(path.join(modelsPath, file));
-						console.info("	" + chalk.grey(model.modelName));
+						console.info(`     ${chalk.grey(model.modelName)}`);
 					}
 				});
 				done(null);
