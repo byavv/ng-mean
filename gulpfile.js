@@ -5,8 +5,8 @@ var _ = require('lodash'),
   $ = require('gulp-load-plugins')(),
   runSequence = require('run-sequence'),
   webpack = require("webpack"),
-  path = require('path'),
-  webpackConfig = require("./server/config/webpack")("production");
+  path = require('path')
+  ;
 
 
 gulp.task("set_test", () => {
@@ -26,32 +26,33 @@ gulp.task("watch-mocha", ["set_test"], () => {
 })
 
 //start tests (single)
-gulp.task("karma", function (done) {
+gulp.task("karma", (done) => {
   startClientTests(true, done);
 });
 
 //start tests (auto)
-gulp.task("watch-karma", function (done) {
+gulp.task("watch-karma", (done) => {
   startClientTests(false, done);
 });
 
-gulp.task('protractor', function () {
+gulp.task('protractor', () => {
   gulp.src([])
     .pipe($.protractor.protractor({
       configFile: 'protractor.conf.js'
     }))
-    .on('error', function (e) {
+    .on('error', (e) => {
       throw e;
     });
 });
 
 //build for production
-gulp.task("build", ["images"], function () {
+gulp.task("build", ["images"], () => {
+  var wpConfig = require("./server/config/webpack")("production");
   return gulp.src(__dirname + '/client/app/app.module.ts')
-    .pipe($.webpack(webpackConfig, webpack))
+    .pipe($.webpack(wpConfig, webpack))
     .pipe(gulp.dest('./build/'));
 });
-gulp.task("images", function () {
+gulp.task("images", () => {
   return gulp.src("client/assets/images/*")
     .pipe($.imagemin({
       optimizationLevel: 4
@@ -60,15 +61,15 @@ gulp.task("images", function () {
 });
 
 // dev task
-gulp.task('default',["images"], function() {
-    // do not forget to install livereload Chrome extension
-    // https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei
-    $.livereload.listen();
-    $.nodemon().on('restart', function(){
-        gulp.src('server/server.js')
-            .pipe($.livereload())
-            .pipe($.notify('Reloading page, please wait...'));
-    })
+gulp.task('default', ["images"], function () {
+  // livereload Chrome extension 
+  // https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei
+  $.livereload.listen();
+  $.nodemon().on('restart', function () {
+    gulp.src('server/server.js')
+      .pipe($.livereload())
+      .pipe($.notify('Reloading page, please wait...'));
+  })
 });
 
 function startClientTests(single, done) {
@@ -78,7 +79,7 @@ function startClientTests(single, done) {
     configFile: __dirname + "/karma.conf.js",
     singleRun: single,
     autoWatch: !single
-  }, function (res) {
+  }, (res) => {
     if (res === 1) {
       $.util.log($.util.colors.white.bgRed.bold("FAIL!"));
     } else {
