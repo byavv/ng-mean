@@ -2,11 +2,11 @@ require("./pswStrengthCheck.less");
 /*
 *  Directive for animation of password field to show password strength. Require animate.css
 * */
-function passwordCheckerDirective ($animate: ng.animate.IAnimateService): ng.IDirective {
+function passwordCheckerDirective($animate: ng.animate.IAnimateService): ng.IDirective {
     return {
         restrict: "A",
         require: "ngModel",
-        link: (scope:any, element:ng.IAugmentedJQuery, attrs:any, ngModel:ng.INgModelController):void => {
+        link: (scope: any, element: ng.IAugmentedJQuery, attrs: any, ngModel: ng.INgModelController): void => {
             let ignoreIfEmpty = !!attrs.ignoreIfEmpty && (attrs.ignoreIfEmpty === 'true');
             let currentState;
             let span = angular.element("<span class='strengthStatus'></span>");
@@ -27,12 +27,12 @@ function passwordCheckerDirective ($animate: ng.animate.IAnimateService): ng.IDi
             span.append(svg);
             $(span).insertAfter(element);
 
-            let draw = (status:string):void => {
+            let draw = (status: string): void => {
                 if (status !== currentState) {
                     currentState = status;
                     angular.element(svg).empty();
                     for (var i = 0, len = pathDef.length; i < len; ++i) {
-                        let path:any = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        let path: any = document.createElementNS("http://www.w3.org/2000/svg", "path");
                         svg.appendChild(path);
                         path.setAttributeNS(null, "d", pathDef[i]);
                         switch (status) {
@@ -53,7 +53,6 @@ function passwordCheckerDirective ($animate: ng.animate.IAnimateService): ng.IDi
                                 break;
                             default:
                                 path.style.fill = "#C8C8C8";
-
                         }
                     }
                 }
@@ -62,9 +61,9 @@ function passwordCheckerDirective ($animate: ng.animate.IAnimateService): ng.IDi
             $animate.setClass(element, "psw-default", "psw-good psw-strong psw-danger");
             draw("default");
 
-            scope.$watch(()=> {
+            scope.$watch(() => {
                 return ngModel.$viewValue;
-            }, (value:any) => {
+            }, (value: any) => {
                 if (value) {
                     if (/^(?=.{0,5}$).*/.test(value)) {
                         // animate input

@@ -7,6 +7,7 @@ import ctrl from "../../../client/app/components/home/home.controller"
 var mockScope;
 var controller;
 describe("Testing controllers", () => {
+    describe("Home controller testing", () => {
     beforeEach(() => {
         angular.mock.module(module.name);
         angular.mock.inject(($controller: ng.IControllerService, $rootScope: ng.IRootScopeService, $timeout: ng.ITimeoutService) => {
@@ -19,10 +20,11 @@ describe("Testing controllers", () => {
             spyOn(controller, "init").and.callThrough();
         });
     });
-    it("controller call router to get configuration for current route", () => {
+    it("controller init should be called", () => {
         controller.init();
         expect(controller.init).toHaveBeenCalled();
         expect(controller.$timeout).toBeDefined();
         mockScope.$digest();
     });
+     });   
 }); 

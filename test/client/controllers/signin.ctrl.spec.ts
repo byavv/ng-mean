@@ -2,11 +2,12 @@
 /// <reference path="../../../typings/jasmine/jasmine.d.ts" />
 
 import module from "../../../client/app/components/components.module"
-import ctrl from "../../../client/app/components/account/signin/signin.controller"
+import ctrl from "../../../client/app/components/account/signIn/signin.controller"
 
 
 describe("Testing controllers", () => {
-    var mockScope,
+    describe("Sign in controller testing", ()=>{
+        var mockScope,
         controller,
         authService,
         _q: ng.IQService,
@@ -49,7 +50,7 @@ describe("Testing controllers", () => {
         expect(authService.signIn).toHaveBeenCalledWith("John", "Doe");
         expect(_location.path()).toBe("/");
     });
-    it("Controller inform user about error if server request fail", () => {
+    it("Controller should inform user about error if server request fail", () => {
         _location.path("/signin");
         signInStub.and.returnValue(_q.reject({data:"some_code_error"}));  
         handleMessageStub.and.returnValue("someError"); 
@@ -61,4 +62,5 @@ describe("Testing controllers", () => {
         expect(serverMessageHandler.handleMessage).toHaveBeenCalledWith("some_code_error");
         expect(controller.error).toBe("someError");
     });    
+    })    
 }); 

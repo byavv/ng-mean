@@ -36,10 +36,7 @@ describe('Testing app module', () => {
             spyOn(_identityService, "update").and.callThrough();
             spyOn(_identityService, "isAuthenticated").and.callThrough();
 
-            spyOn(_authService, "isAuthorized").and.callThrough();           
-            
-            /*_authRequestHandler = _httpBackend.when('GET', '/auth/signup')
-                .respond({ id: 'fakeid', token: 'faketoken' }, { 'A-Token': 'xxx' });*/
+            spyOn(_authService, "isAuthorized").and.callThrough();
         });
 
     });

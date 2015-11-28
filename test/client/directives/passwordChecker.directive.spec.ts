@@ -10,11 +10,7 @@ let _compile: ng.ICompileService,
     _compiledElement: ng.IAugmentedJQuery;
 var mcomponentProvider;
 describe("Testing Directives", () => {
-
     describe("Password Checker", () => {
-
-      
-
         beforeEach(angular.mock.module(module.name, ($provide: ng.auto.IProvideService) => {
             $provide.factory("logger", () => {
                 var warning = jasmine.createSpy("warning");
@@ -28,11 +24,12 @@ describe("Testing Directives", () => {
             });
         }));
 
-        beforeEach(inject(($compile: ng.ICompileService, $rootScope: ng.IRootScopeService) => {
-            _compile = $compile;
-            _rootScope = $rootScope;
-        }
-        ));
+        beforeEach(() => {
+            inject(($compile: ng.ICompileService, $rootScope: ng.IRootScopeService) => {
+                _compile = $compile;
+                _rootScope = $rootScope;
+            });
+        })
 
         function createElement(html, scope): ng.IAugmentedJQuery {
             var element = angular.element(html);
@@ -92,6 +89,25 @@ describe("Testing Directives", () => {
             expect(input.hasClass("psw-good")).toBeFalsy();
             expect(input.hasClass("psw-danger")).toBeFalsy();
             expect(input.hasClass("psw-strong")).toBeTruthy();
+        });
+
+        it("Should change style class to default when model empty and ignore-if-empty set to true", () => {
+            _compiledElement = createElement(
+                "<div><input  type='password'  ng-model='model' required password-strength-checker ignore-if-empty='true' strength></div>", _scope);
+            _scope.model = "123456Ad-";
+            _scope.$digest();
+            let input = _compiledElement.find("input");
+            expect(input.hasClass("psw-good")).toBeFalsy();
+            expect(input.hasClass("psw-danger")).toBeFalsy();
+            expect(input.hasClass("psw-strong")).toBeTruthy();
+
+            _scope.model = "";
+            _scope.$digest();
+
+            expect(input.hasClass("psw-good")).toBeFalsy();
+            expect(input.hasClass("psw-danger")).toBeFalsy();
+            expect(input.hasClass("psw-strong")).toBeFalsy();
+            expect(input.hasClass("psw-default")).toBeTruthy();
         });
     });
 });
