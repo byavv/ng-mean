@@ -36,7 +36,7 @@ declare var window: _Window;
 declare module meanTs {
     export interface IUsersService {
         forgotPassword(email: string): ng.IPromise<any>;
-        setNewPassword(password: string, token: string);
+        setNewPassword(password: string, token: string): ng.IPromise<any>;
         getProfile(): ng.IPromise<any>;
         getAccount(): ng.IPromise<any>;
         updateProfile(userProfile: any): ng.IPromise<any>;

@@ -25,8 +25,8 @@ export default class ServerMessage implements mts.IServerMessageHandler {
             } else {
                 return this.serverData[message.key].default;
             }
-        } else {
-            return "Unexpected server error";
+        } else {            
+            return `Unexpected server error`;
         }
     }
 };

@@ -25,13 +25,13 @@ export default class SetNewController {
     private submit():void {
         if (this.setNewPasswordForm.$valid) {
             this.usersService.setNewPassword(this.password, this.$routeParams.token)
-                .then((res:any):void=> {
-                    this.info = this.serverMessageHandler.handleMessage(res.data);
+                .then((res:any) => {                   
+                    this.info = this.serverMessageHandler.handleMessage(res);
                     this.$timeout(()=> {
                         this.$location.path("/signin");
                     }, 2000);
                 }, (err:any):void=> {
-                    this.error = this.serverMessageHandler.handleMessage(err.data);
+                    this.error = this.serverMessageHandler.handleMessage(err);
                 });
         }
     }
