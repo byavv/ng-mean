@@ -1,6 +1,6 @@
 /// <reference path="../typings/app.d.ts" />
 "use strict";
-require("../vendor/animate.css");
+require("../assets/animate.css");
 
 // bootstrap
 require("jquery");
