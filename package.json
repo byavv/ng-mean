@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "angular TDD starter",
   "main": "server/server.js",
-  "scripts": {
-    "postinstall": "bower install",
+  "scripts": {    
     "pretest": "npm install",
     "test": "gulp mocha",
     "prestart": "npm install",
