@@ -17,3 +17,7 @@ script:
 services: 
   - mongodb
   - redis-server
+  
+after_script:
+  - gulp coverage
+  
