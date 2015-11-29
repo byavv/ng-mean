@@ -17,12 +17,15 @@ gulp.task('mocha', ["set_test"], () => {
     .pipe($.mocha({     
       reporter: 'spec'
     }))
+    .once('end', function () {
+      process.exit();
+    })
     .on('error', $.util.log);
 });
 
 
 gulp.task("watch-mocha", ["set_test"], () => {
-  gulp.run("mocha");
+  //gulp.run("mocha");
   gulp.watch(["server/**/*.js", "test/**/*.js"], ["mocha"]);
 })
 
