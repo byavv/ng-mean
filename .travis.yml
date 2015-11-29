@@ -10,7 +10,6 @@ before_script:
   - sleep 1
 
 script:
-  - gulp mocha
   - gulp karma
  
 
