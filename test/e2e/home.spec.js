@@ -1,7 +1,3 @@
-/**
- * File: e2e.js
- * Created by kpe on 29-Mar-2014 at 10:46 PM.
- */
 
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
@@ -24,24 +20,3 @@ describe('protractor library', function() {
 		expect($).to.exist;
 	});
 });
-/*
-describe('chat app',function(){
-	it('should redirect to #/chat', function() {
-		browser.get('/dev');
-		browser.getCurrentUrl().then(function(url){
-			expect(url.substr("http://localhost:8080".length)).to.equal('/dev#/chat');
-		});
-	});
-
-	it('should send chat messages', function(){
-		var msgInput = element(by.model('msgInput'));
-		msgInput.sendKeys('Hello, Chat!\n');
-		msgInput.getText().then(function(text){
-			expect(text).to.equal('');
-			var msg = element(by.repeater('msg in room.messages').row(0).column('content'));
-			msg.getText().then(function(msgText){
-				 expect(msgText).to.equal('Hello, Chat!');
-			});
-		});
-	});
-});*/

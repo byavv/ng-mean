@@ -14,11 +14,12 @@ gulp.task("set_test", () => {
 })
 gulp.task('mocha', ["set_test"], () => {
   gulp.src(['test/server/**/*.spec.js'], { read: false })
-    .pipe($.mocha({
+    .pipe($.mocha({     
       reporter: 'spec'
     }))
     .on('error', $.util.log);
 });
+
 
 gulp.task("watch-mocha", ["set_test"], () => {
   gulp.run("mocha");
@@ -37,12 +38,16 @@ gulp.task("watch-karma", (done) => {
 
 gulp.task('protractor', () => {
   gulp.src([])
-    .pipe($.protractor.protractor({
-      configFile: 'protractor.conf.js'
+    .pipe($.angularProtractor({
+      'configFile': 'protractor.conf.js',
+      'args': ['--baseUrl', 'http://localhost:3030'],
+      'autoStartStopServer': true,
+      'debug': true
     }))
-    .on('error', (e) => {
-      throw e;
-    });
+    .on('error', function(e) {
+            console.log(e);
+        })
+    .on('end', ()=>{});
 });
 
 //build for production
@@ -59,6 +64,14 @@ gulp.task("images", () => {
     }))
     .pipe(gulp.dest("build/images"));
 });
+
+gulp.task('coverage', [], function()
+{
+  //http://stackoverflow.com/questions/25434794/gulp-coveralls-returns-422-no-travisci-builds-can-be-found
+    return gulp
+            .src('./coverage/**/lcov.info')
+            .pipe($.coveralls());
+})
 
 // dev task
 gulp.task('default', ["images"], function () {

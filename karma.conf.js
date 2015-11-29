@@ -18,13 +18,9 @@ module.exports = function(config) {
             }
         },
         coverageReporter: {
-            type: 'html',
-            dir: 'tests/coverage/'            
-        },
-        /*coverageReporter: {
-        type : 'lcov',
-        dir : 'coverage'
-    }*/
+            type : 'lcov',
+            dir: 'coverage'            
+        },        
         exclude: [],
         captureTimeout: 60000,
         preprocessors: {
