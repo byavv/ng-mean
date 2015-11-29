@@ -25,7 +25,7 @@ describe("User api controller tests", () => {
 			resetData: {},
 			save: sinon.stub().yields(null, { _id: 12587458 }),
 		}
-		findOneStub = sinon.stub().yields(null, user_to_find);
+		findOneStub = sinon.stub();
 		saveStub = sinon.stub().yields(null, { _id: "0254879456" });
 				
 		//mongoose User model mock
@@ -45,14 +45,15 @@ describe("User api controller tests", () => {
 
 		done(); 
 	})
-	before(() => {
+	beforeEach(() => {
 		app = express();
 		expressConf(app);
 		//mock jwt payload extraction
-		app.use("/api", (req, res, next) => {
+		app.use((req, res, next) => {
 			req.user = { id: "12589541025", roles: ["user"] }
 			next();
 		});
+		
 		//fake routes
 		app.get('/api/reset/:token', controller.validateResetToken);
 		app.post('/api/account', controller.postAccount);
@@ -63,15 +64,13 @@ describe("User api controller tests", () => {
 	});
 
 
-	describe("Reset password test", () => {
-		beforeEach(() => {
-			//findOneStub = sinon.stub().yields(null, user_to_find);
-		})
+	describe("Reset password test", () => {		
 		afterEach(() => {
 			findOneStub.reset();
 			sendResetMailstub.reset();
 		})
 		it("Should redirect browser to angular route with given token as param", (done) => {
+			
 			findOneStub.yields(null, user_to_find);
 			request(app)
 				.get('/api/reset/fake_token_from_email')
@@ -82,6 +81,7 @@ describe("User api controller tests", () => {
 					expect(res.header['location']).to.be.equal("/password/reset/fake_token_from_email");
 					done();
 				});
+
 
 		})
 		it("Should redirect to error page if mongo error", (done) => {

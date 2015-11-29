@@ -14,18 +14,20 @@ module.exports = {
      * Route callback for GET /api/reset/:token
      * When user clicks on link in email to reset password.
      */
-    validateResetToken: function (req, res, next) {
+    validateResetToken: function (req, res) {
         User.findOne({
             "resetData.resetToken": req.params.token,
             "resetData.resetExpires": {
                 $gt: Date.now()
             }
         }, (err, user) => {
-            if (err) res.status(500).send();
+            if (err) {
+                return res.status(500).send();
+            };
             if (user) {
-                res.redirect('/password/reset/' + req.params.token)
+                return res.redirect('/password/reset/' + req.params.token);
             } else {
-                res.redirect('/password/error/');
+                return res.redirect('/password/error/');
             }
         });
     },
@@ -87,11 +89,11 @@ module.exports = {
                             }
 
                         } else {
-                            res.status(200).send({ key: "info_password_changed_success" });
+                            return res.status(200).send({ key: "info_password_changed_success" });
                         }
                     })
                 } else {
-                    res.status(400).send({ key: "error_old_password_is_not_valid" });
+                    return res.status(400).send({ key: "error_old_password_is_not_valid" });
                 }
             })
         }
@@ -121,12 +123,12 @@ module.exports = {
             User.findOne({ _id: userId }, function (err, user) {
                 if (err) return next(err);
                 if (!user) {
-                    res.status(400).send({ key: 'error_user_found' });
+                    return res.status(400).send({ key: 'error_user_found' });
                 }
                 _.extend(user.profile, req.body.profile);
                 user.save(function (err) {
                     if (err) return next(err);
-                    res.status(200).json({ key: "info_profile_updated_success", profile: user.profile });
+                    return res.status(200).json({ key: "info_profile_updated_success", profile: user.profile });
                 })
             })
         }
@@ -206,15 +208,15 @@ module.exports = {
                         if (err) {
                             return res.status(500).send({ key: "error_500" });
                         } else {
-                            res.status(200).send({ key: "info_password_changed_success" });
+                            return res.status(200).send({ key: "info_password_changed_success" });
                         }
                     });
                 } else {
-                    res.status(400).send({ key: "error_user_found" });
+                    return res.status(400).send({ key: "error_user_found" });
                 }
             });
         } else {
-            res.status(400).send({ key: "error_notValidCredentials" });
+            return res.status(400).send({ key: "error_notValidCredentials" });
         }
     }
 }
