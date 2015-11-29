@@ -4,12 +4,10 @@ node_js: "4.1"
 
 before_script:
   - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - npm install -g bower
+  - "sh -e /etc/init.d/xvfb start"  
   - npm install -g gulp
   - npm start 
-  - npm run update-webdriver
-  - bower install -f
+  - npm run update-webdriver 
 
 script:
   - gulp mocha
