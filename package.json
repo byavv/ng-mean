@@ -4,11 +4,14 @@
   "description": "angular TDD starter",
   "main": "server/server.js",
   "scripts": {
+    "postinstall": "bower install",
+    "pretest": "npm install",
     "test": "gulp mocha",
+    "prestart": "npm install",
     "start": "node server/server.js",
     "dev": "gulp",
-    "build": "gulp build",
-    "postinstall": "bower install"
+    "build": "gulp build",    
+    "update-webdriver": "webdriver-manager update"
   },
   "repository": {
     "type": "git",
