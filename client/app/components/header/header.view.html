@@ -2,7 +2,7 @@
 	<div class="navbar navbar-default navbar-fixed-top app-header">
 		<div class="header-container center-block">
 			<div class="navbar-header">
-			<a class="navbar-brand" href="/">TS MEAN</a>
+			<a class="navbar-brand" ui-sref="home">TS MEAN</a>
 			<button class="btn btn-default navbar-toggle"
 					data-toggle="collapse"
 					data-target=".navbar-collapse">
@@ -13,11 +13,11 @@
 		<div class="navbar-collapse collapse" ng-controller="authMenuCtrl as vm">
 			<ul class="nav navbar-nav navbar-right" data-ng-hide="vm.identityService.isAuthenticated()">
 				<li ng-class="{active: $uiRoute}">
-					<a href="/signup">Sign Up</a>
+					<a ui-sref="signup">Sign Up</a>
 				</li>
 				<li class="divider-vertical"></li>
 				<li ng-class="{active: $uiRoute}">
-					<a href="/signin">Sign In</a>
+					<a ui-sref="signin">Sign In</a>
 				</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right" data-ng-show="vm.identityService.isAuthenticated()">
@@ -27,7 +27,7 @@
 					</a>
 					<ul class="dropdown-menu">
 						<li>
-							<a href="/profile">Edit Profile</a>
+							<a ui-sref="profile">Edit Profile</a>
 						</li>
 						<li class="divider"></li>
 						<li>

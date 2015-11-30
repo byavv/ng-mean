@@ -1,36 +1,38 @@
-export function run ($rootScope: ng.IRootScopeService,
-                     $location: ng.ILocationService,
-                     $window: ng.IWindowService,
-                     identityService: mts.IIdentityService):void {
-    $rootScope.$on("$routeChangeError", (evt:any, current:any, prev:any, rejection:any):void => {
+export function run($rootScope: ng.IRootScopeService,
+    $state: ng.ui.IStateService,
+    $window: ng.IWindowService,
+    identityService: mts.IIdentityService): void {
+    $rootScope.$on("$stateChangeError", (evt: any, current: any, prev: any, rejection: any): void => {
         if (rejection === "401") {
-            $location.path("/signin");
+            $state.go("signin");
         }
     });
-    $rootScope.$on("$routeChangeStart", (event:any, next:any):void => {
-        if (next.authorized !== undefined) {
-            if (!next.authorized) {
+    $rootScope.$on("$stateChangeStart", (event: any, toState: ng.ui.IState, toParams, fromState, fromParams): void => {
+        if (toState.data && toState.data.authorized !== undefined) {
+            if (!toState.data.authorized) {
                 if (identityService.isAuthenticated()) {
-                    $location.path("/");
+                    event.preventDefault();
+                    $state.go("home");
                 }
             } else {
                 if (!identityService.isAuthenticated()) {
-                    $location.path("/signin");
+                    event.preventDefault();
+                    $state.go("signin");
                 }
             }
-        } 
+        }
     });
     angular.extend($window, {
         app: {
-            update: ():void => {
+            update: (): void => {
                 identityService.update(true);
-                $location.path("/");
-            } 
+                $state.go("home");
+            }
         }
     });
     identityService.update(false);
 }
-run.$inject = ["$rootScope", "$location", "$window", "identityService", "authService"];
+run.$inject = ["$rootScope", "$state", "$window", "identityService", "authService"];
 
 
 

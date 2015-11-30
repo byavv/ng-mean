@@ -17,6 +17,7 @@ require("../assets/index");
 
 
 require("angular-local-storage");
+require("angular-ui-router");
 
 import componentsModule from "./components/components.module";
 import directivesModule from "./directives/directives.module";
@@ -35,6 +36,7 @@ export default angular.module("app", [
     require("angular-messages"),        // ngMessages
 //require("angular-cookies"),         // ngCookies
     "LocalStorageModule",
+    "ui.router",
 
 
     componentsModule.name,				// app modules
