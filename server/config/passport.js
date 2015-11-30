@@ -2,7 +2,7 @@
 
 var mongoose = require('mongoose'),
 	passport = require("passport"),
-	nconf = require("nconf"),	
+	nconf = require("nconf"),
 	GitHubStrategy = require('passport-github2').Strategy,
 	User = mongoose.model("User");
 
@@ -12,10 +12,10 @@ module.exports = function () {
 			clientID: nconf.get("github").clientID,
 			clientSecret: nconf.get("github").clientSecret,
 			callbackURL: nconf.get("github").callbackURL
-		}, function (accessToken, refreshToken, profile, done) {
+		}, (accessToken, refreshToken, profile, done) => {
 			process.nextTick(() => {
 				// find the user in the database based on github id
-				User.findOne({authProvider: "github", 'extOAuth.providerData.id': profile.id}, (err, user) => {
+				User.findOne({ authProvider: "github", 'extOAuth.providerData.id': profile.id }, (err, user) => {
 					// if there is an error, stop everything and return that
 					// ie an error connecting to the database
 					if (err)
@@ -31,7 +31,8 @@ module.exports = function () {
 						// if there is no user found with that github id, create them
 						var newUser = new User();
 						newUser.authProvider = "github";
-						newUser.username = profile.username;
+						newUser.username = `github_${profile.username}`;
+						newUser.email = `github_${profile.emails[0].value}`;
 						newUser.imageUrl = profile._json.avatar_url;
 						newUser.extOAuth = {};
 						newUser.extOAuth.providerData = {
@@ -41,11 +42,15 @@ module.exports = function () {
 							email: profile.emails[0].value// github can return multiple emails so we'll take the first
 						};
 						// save our user to the database
-						newUser.save(function (err) {
-							if (err)
-								throw err;
+						newUser.save((err) => {
+							if (err) {
+								return done(err)
+							} else {
+								return done(null, newUser);
+							}
+							//throw err;
 							// if successful, return the new user
-							return done(null, newUser);
+							
 						});
 					}
 				});
@@ -53,15 +58,15 @@ module.exports = function () {
 		}));
 
 
-	passport.serializeUser(function (user, done) {
+	passport.serializeUser((user, done) => {
 		done(null, user.id);
 	});
 
 	// Deserialize sessions
-	passport.deserializeUser(function (id, done) {
+	passport.deserializeUser((id, done) => {
 		User.findOne({
 			_id: id
-		}, '-salt -password', function (err, user) {
+		}, '-salt -password', (err, user) => {
 			done(err, user);
 		});
 	});

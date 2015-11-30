@@ -99,7 +99,11 @@ module.exports = {
         return function (req, res, next) {
             passport.authenticate(strategy, (err, user, redirectURL) => {
                 if (err || !user) {
-                    return res.redirect('/signin');
+                    //return res.redirect('/signin');
+                    return res.render("serverError", {
+                        title: "",
+                        error: err
+                    });
                 }
                 tokenHelper.create(user, function (err, result) {
                     if (err) {
