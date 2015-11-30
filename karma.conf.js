@@ -12,7 +12,7 @@ module.exports = function(config) {
         ],
         webpack: webpackConfig,
         webpackMiddleware: {
-            noInfo: false,           
+            noInfo: true,           
             stats: {
                 colors: true
             }

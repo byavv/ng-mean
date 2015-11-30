@@ -12,15 +12,26 @@ var _ = require('lodash'),
 gulp.task("set_test", () => {
   process.env.NODE_ENV = 'test';
 })
-gulp.task('mocha', ["set_test"], () => {
+gulp.task('mocha-on-travis', ["set_test"], () => {
+  var mochaError;
+  var handleMochaError = (err) => {
+    console.log('Mocha encountered an error, exiting with status 1');
+    console.log('Error:', err.message);
+    process.exit(1);
+  };
   gulp.src(['test/server/**/*.spec.js'], { read: false })
-    .pipe($.mocha({     
+    .pipe($.mocha({
       reporter: 'spec'
     }))
-    .once('end', function () {
+    .on('end', () => {
+      if (mochaError) return handleMochaError(mochaError);
       process.exit();
     })
-    .on('error', $.util.log);
+    .on('error', (err) => {
+      $.util.log('ERROR:', err.message);
+      $.util.log('Stack:', err.stack);
+      mochaError = err;
+    });
 });
 
 
@@ -47,10 +58,10 @@ gulp.task('protractor', () => {
       'autoStartStopServer': true,
       'debug': true
     }))
-    .on('error', function(e) {
-            console.log(e);
-        })
-    .on('end', ()=>{});
+    .on('error', function (e) {
+      console.log(e);
+    })
+    .on('end', () => { });
 });
 
 //build for production
@@ -68,12 +79,11 @@ gulp.task("images", () => {
     .pipe(gulp.dest("build/images"));
 });
 
-gulp.task('coverage', [], function()
-{
+gulp.task('coverage', [], function () {
   //http://stackoverflow.com/questions/25434794/gulp-coveralls-returns-422-no-travisci-builds-can-be-found
-    return gulp
-            .src('./coverage/**/lcov.info')
-            .pipe($.coveralls());
+  return gulp
+    .src('./coverage/**/lcov.info')
+    .pipe($.coveralls());
 })
 
 // dev task
