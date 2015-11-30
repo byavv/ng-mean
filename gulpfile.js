@@ -34,9 +34,23 @@ gulp.task('mocha-on-travis', ["set_test"], () => {
     });
 });
 
+gulp.task('mocha', ["set_test"], () => {
+  gulp.src(['test/server/**/*.spec.js'], { read: false })
+    .pipe($.mocha({
+      reporter: 'spec'
+    }))
+    .on('end', () => {
+      $.util.log($.util.colors.bgYellow('INFO:'), 'Mocha completed');
+    })
+    .on('error', (err) => {
+      $.util.log($.util.colors.bgRed('ERROR:'), $.util.colors.red(err.message));
+      $.util.log('Stack:', $.util.colors.red(err.stack));
+    });
+});
+
 
 gulp.task("watch-mocha", ["set_test"], () => {
-  //gulp.run("mocha");
+  gulp.run("mocha");
   gulp.watch(["server/**/*.js", "test/**/*.js"], ["mocha"]);
 })
 
