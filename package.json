@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "angular TDD starter",
   "main": "server/server.js",
-  "scripts": {    
+  "scripts": {
     "pretest": "npm install",
     "test": "gulp mocha",
     "prestart": "npm install",
     "start": "node server/server.js",
     "dev": "gulp",
-    "build": "gulp build",    
+    "build": "gulp build",
     "update-webdriver": "webdriver-manager update"
   },
   "repository": {
@@ -88,6 +88,7 @@
     "angular-messages": "^1.4.8",
     "angular-route": "^1.4.8",
     "angular-ui-bootstrap": "^0.14.3",
+    "angular-ui-router": "^0.2.15",
     "async": "^1.5.0",
     "body-parser": "^1.14.1",
     "cookie-parser": "^1.4.0",
