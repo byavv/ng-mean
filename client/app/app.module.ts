@@ -24,7 +24,7 @@ import directivesModule from "./directives/directives.module";
 import sharedModule from "./shared/shared.module";
 import servicesModule from "./services/services.module";
 import {httpConfig} from "./config/app.http.config";
-import {routeConfig, locationConfig} from "./config/app.router.config";
+import {routeConfig, locationConfig, logConfig} from "./config/app.router.config";
 import {run} from "./app.run";
 
 
@@ -47,6 +47,7 @@ export default angular.module("app", [
     .config(routeConfig)
     .config(locationConfig)
     .config(httpConfig)
+    .config(logConfig)
     .run(run)
     .value("config", require("../../shared/index"));
 
