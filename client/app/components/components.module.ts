@@ -7,7 +7,9 @@ import AuthMenuController from "./header/auth.menu.controller";
 import PasswordForgetCtrl from "./user/psw_Forget/forget.controller";
 import SetNewPasswordCtrl from "./user/psw_SetNew/setNewPassword.controller";
 import PasswordResetError from "./user/psw_Error/passwordResetError.controller";
-import ProfileController from "./user/profile/profile.controller";
+import UserController from "./user/user/user.controller";
+import AccountController from "./user/user/account.controller";
+import ProfileController from "./user/user/profile.controller";
 
 import SignUpController from "./account/signUp/signup.controller";
 import SignInController from "./account/signIn/signin.controller";
@@ -21,6 +23,8 @@ let componentsModule: ng.IModule =
         .controller(AuthMenuController.controllerId, AuthMenuController)
         .controller(SignUpController.controllerId, SignUpController)
         .controller(ProfileController.controllerId, ProfileController)
+        .controller(UserController.controllerId, UserController)
+        .controller(AccountController.controllerId, AccountController)
         .controller(SignInController.controllerId, SignInController)
         .controller(SetNewPasswordCtrl.controllerId, SetNewPasswordCtrl)
         .controller(PasswordResetError.controllerId, PasswordResetError)
