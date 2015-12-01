@@ -12,6 +12,7 @@ describe("Testing controllers", () => {
             usersService,
             _q: ng.IQService,
             _timeout: any,
+            _state: ng.ui.IStateService,
             _location: ng.ILocationService,
             setNewStub: jasmine.Spy,
             handleMessageStub: jasmine.Spy,
@@ -24,6 +25,7 @@ describe("Testing controllers", () => {
             angular.mock.inject(($injector: ng.auto.IInjectorService) => {
                 _q = $injector.get<ng.IQService>("$q");
                 _location = $injector.get<ng.ILocationService>('$location');
+                _state = $injector.get<ng.ui.IStateService>('$state');
                 usersService = $injector.get<any>("usersService");
                 serverMessageHandler = $injector.get<any>("serverMessageHandler");
                 _timeout = $injector.get<any>("$timeout");
@@ -34,7 +36,7 @@ describe("Testing controllers", () => {
 
                 controller = $injector.get<ng.IControllerService>("$controller")(ctrl.controllerId, {
                     $scope: mockScope,  
-                    $routeParams: { token: 'faketoken' }
+                    $stateParams: { token: 'faketoken' }
                 });
             });
         });
@@ -68,7 +70,8 @@ describe("Testing controllers", () => {
             mockScope.$digest();
             _timeout.flush();
             _timeout.verifyNoPendingTasks();
-            expect(_location.path()).toBe("/signin");
+            //expect(_location.path()).toBe("/signin");
+            expect(_state.current.name).toBe("signin");
         });
 
     })

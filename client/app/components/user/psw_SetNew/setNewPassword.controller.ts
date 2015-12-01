@@ -8,7 +8,8 @@ export default class SetNewController {
         "serverMessageHandler",
         "$routeParams",
         "$timeout",
-        "$location"
+        "$state",
+        "$stateParams"
     ];
     private password:string;
     private error:string;
@@ -19,16 +20,17 @@ export default class SetNewController {
                 private serverMessageHandler:mts.IServerMessageHandler,
                 private $routeParams:any,
                 private $timeout:ng.ITimeoutService,
-                private $location:ng.ILocationService) {
+                private $state:ng.ui.IStateService, 
+                private $stateParams: any) {
     }
 
     private submit():void {
         if (this.setNewPasswordForm.$valid) {
-            this.usersService.setNewPassword(this.password, this.$routeParams.token)
+            this.usersService.setNewPassword(this.password, this.$stateParams.token)
                 .then((res:any) => {                   
                     this.info = this.serverMessageHandler.handleMessage(res);
                     this.$timeout(()=> {
-                        this.$location.path("/signin");
+                        this.$state.go("signin");
                     }, 2000);
                 }, (err:any):void=> {
                     this.error = this.serverMessageHandler.handleMessage(err);
