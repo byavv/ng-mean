@@ -21,12 +21,9 @@ export default class ProfileController {
         if (!this.profile) {
             this.loading = true;
             this.usersService.getProfile().then((res: any) => {
-                if (res) {                                
-                    // slow it down a bit
-                    this.$timeout(() => {
-                        this.profile = res;
-                        this.loading = false
-                    }, 500);
+                if (res) {
+                    this.profile = res;
+                    this.loading = false
                 }
             }, (err) => {
                 this.showAlert(this.serverMessageHandler.handleMessage(err), true);

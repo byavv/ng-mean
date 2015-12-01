@@ -17,15 +17,13 @@ export default class AccountController {
         private serverMessageHandler: mts.IServerMessageHandler) {
         this.init();
     }
-    private init() {        
+    private init() {
         if (!this.account) {
             this.loading = true;
             this.usersService.getAccount().then((res: any) => {
                 if (res) {
-                    this.$timeout(() => {
-                        this.account = res;
-                        this.loading = false
-                    }, 500);
+                    this.account = res;
+                    this.loading = false;
                 }
             }, (err) => {
                 this.showAlert(this.serverMessageHandler.handleMessage(err), true);
