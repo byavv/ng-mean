@@ -15,8 +15,9 @@ export default class AccountController {
         private $scope: ng.IScope,
         private $timeout: ng.ITimeoutService,
         private serverMessageHandler: mts.IServerMessageHandler) {
-
-
+        this.init();
+    }
+    private init() {        
         if (!this.account) {
             this.loading = true;
             this.usersService.getAccount().then((res: any) => {
