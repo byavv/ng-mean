@@ -1,3 +1,5 @@
+// Method to test if user has permission for claimed route
+// 
 let isAuthorizedForRoles = (roles: Array<string>): Array<any> => {
     return ["$q", "authService", "$location", ($q: ng.IQService, authService: mts.IAuthService): ng.IPromise<any> => {
         let defer = $q.defer();
@@ -10,9 +12,11 @@ let isAuthorizedForRoles = (roles: Array<string>): Array<any> => {
     }];
 };
 
-export function routeConfig($stateProvider: ng.ui.IStateProvider, $urlRouterProvider:ng.ui.IUrlRouterProvider, $logProvider: ng.ILogProvider): void {
-    $logProvider.debugEnabled(_DEV_MODE);
-    $urlRouterProvider.otherwise('/');
+export function routeConfig($stateProvider: ng.ui.IStateProvider, $urlRouterProvider: ng.ui.IUrlRouterProvider): void {
+    $urlRouterProvider
+        
+        .otherwise('/');
+        
     $stateProvider
         .state('home', {
             url: '/',
@@ -25,14 +29,14 @@ export function routeConfig($stateProvider: ng.ui.IStateProvider, $urlRouterProv
             controller: "signupCtrl",
             controllerAs: "vm",
             templateUrl: "signup.view.html",
-            data: { authorized: false }
+            data: { authenticatedOnly: false } //authenticated users won't be able to get this page.
         })
         .state("signin", {
             url: "/signin",
             controller: "signinCtrl",
             controllerAs: "vm",
             templateUrl: "signin.view.html",
-            data: { authorized: false }
+            data: { authenticatedOnly: false }
         })
         .state("confirm", {
             url: "/confirm",
@@ -63,87 +67,55 @@ export function routeConfig($stateProvider: ng.ui.IStateProvider, $urlRouterProv
             controller: "restrictedCtrl",
             controllerAs: "vm",
             templateUrl: "restricted.view.html",
-            data: { authorized: true },
+            data: { authenticatedOnly: true },
             resolve: {
                 auth: isAuthorizedForRoles(["user"])
             }
+        })
+        /*.state("profile", {
+            url: "/profile",
+            controller: "profileCtrl",
+            controllerAs: "vm",
+            templateUrl: "profile.view.html",
+            data: { authenticatedOnly: true },
+            resolve: {
+                auth: isAuthorizedForRoles(["user"])
+            }
+        });*/
+        
+        .state("user", {
+            abstract: true,
+            url: "/user",
+            controller: "userCtrl",
+            controllerAs: "vm",
+            templateUrl: "user.view.html",
+            data: { authenticatedOnly: true },            
+        })
+         .state("account", {
+            parent: "user",
+            url: "/account",
+            controller: "accountCtrl",
+            controllerAs: "vm",
+            templateUrl: "account.view.html",
+            resolve: {
+                auth: isAuthorizedForRoles(["user"])
+            }            
         })
         .state("profile", {
-            url:"/profile",
+            parent: "user",
+            url: "/profile",
             controller: "profileCtrl",
             controllerAs: "vm",
             templateUrl: "profile.view.html",
-            data: { authorized: true },
             resolve: {
                 auth: isAuthorizedForRoles(["user"])
-            }
+            }            
         });
+        
 }
-
-
-export function route1Config($routeProvider: any /*ng.route.IRouteProvider*/): void {
-    $routeProvider
-        .when("/", {
-            controller: "homeCtrl",
-            controllerAs: "vm",
-            templateUrl: "home.view.html"
-        })
-        .when("/signup", {
-            controller: "signupCtrl",
-            controllerAs: "vm",
-            templateUrl: "signup.view.html",
-            authorized: false
-        })
-        .when("/signin", {
-            controller: "signinCtrl",
-            controllerAs: "vm",
-            templateUrl: "signin.view.html",
-            authorized: false
-        })
-        .when("/confirm", {
-            controller: "confirmCtrl",
-            controllerAs: "vm",
-            templateUrl: "confirm.view.html"
-        })
-        .when("/forget", {
-            controller: "forgetCtrl",
-            controllerAs: "vm",
-            templateUrl: "forget.view.html"
-        })
-        .when("/password/reset/:token", {
-            controller: "setNewCtrl",
-            controllerAs: "vm",
-            templateUrl: "setNewPassword.view.html"
-        })
-        .when("/password/error", {
-            controller: "psvErrorCtrl",
-            controllerAs: "vm",
-            templateUrl: "passwordResetError.view.html"
-        })
-        .when("/restricted", {
-            controller: "restrictedCtrl",
-            controllerAs: "vm",
-            templateUrl: "restricted.view.html",
-            authorized: true,
-            resolve: {
-                auth: isAuthorizedForRoles(["user"])
-            }
-        })
-        .when("/profile", {
-            controller: "profileCtrl",
-            controllerAs: "vm",
-            templateUrl: "profile.view.html",
-            authorized: true,
-            resolve: {
-                auth: isAuthorizedForRoles(["user"])
-            }
-        })
-        .otherwise({ redirectTo: "/" });
+export function logConfig($logProvider: ng.ILogProvider){
+    $logProvider.debugEnabled(_DEV_MODE);
 }
-routeConfig.$inject = ["$stateProvider", "$urlRouterProvider", "$logProvider"];
-
-
-
 export function locationConfig($locationProvider: ng.ILocationProvider): void {
     $locationProvider.html5Mode(true);
 }

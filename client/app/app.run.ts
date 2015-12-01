@@ -2,19 +2,20 @@ export function run($rootScope: ng.IRootScopeService,
     $state: ng.ui.IStateService,
     $window: ng.IWindowService,
     identityService: mts.IIdentityService): void {
-    $rootScope.$on("$stateChangeError", (evt: any, current: any, prev: any, rejection: any): void => {
-        if (rejection === "401") {
+    $rootScope.$on("$stateChangeError", (event, toState, toParams, fromState, fromParams, error): void => {        
+        if (error == 401) {
             $state.go("signin");
         }
     });
-    $rootScope.$on("$stateChangeStart", (event: any, toState: ng.ui.IState, toParams, fromState, fromParams): void => {
-        if (toState.data && toState.data.authorized !== undefined) {
-            if (!toState.data.authorized) {
+    //check route data and if it's protected, check user autho
+    $rootScope.$on("$stateChangeStart", (event: any, toState: ng.ui.IState, toParams, fromState: ng.ui.IState, fromParams): void => {
+        if (toState.data && toState.data.authenticatedOnly !== undefined) {
+            if (!toState.data.authenticatedOnly) {
                 if (identityService.isAuthenticated()) {
                     event.preventDefault();
                     $state.go("home");
                 }
-            } else {
+            } else {               
                 if (!identityService.isAuthenticated()) {
                     event.preventDefault();
                     $state.go("signin");
