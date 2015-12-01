@@ -1,6 +1,7 @@
 export function httpInterceptor($q: ng.IQService,
     identityService: mts.IIdentityService,
-    localStorageService: angular.local.storage.ILocalStorageService): ng.IHttpInterceptor {
+    localStorageService: angular.local.storage.ILocalStorageService,
+    $location: ng.ILocationService): ng.IHttpInterceptor {
     return {
         request: (config: ng.IRequestConfig): ng.IRequestConfig => {
             config.headers = config.headers || {};
@@ -35,9 +36,8 @@ export function httpInterceptor($q: ng.IQService,
             }*/
 
             if (!!rejection && rejection.status === 401) {
-                identityService.user = null;
-                //window.location.assign("/signin");
-                window.location.href = "/signin";
+                identityService.user = null;               
+                $location.path("/signin");
             }
             if (!!rejection && rejection.status === 500) {
                 // todo: show user about error, may be using popup window
@@ -47,7 +47,7 @@ export function httpInterceptor($q: ng.IQService,
         }
     };
 }
-httpInterceptor.$inject = ["$q", "identityService", "localStorageService"];
+httpInterceptor.$inject = ["$q", "identityService", "localStorageService", "$location"];
 
 export function httpConfig($httpProvider: ng.IHttpProvider): any {
     $httpProvider.interceptors.push(httpInterceptor);

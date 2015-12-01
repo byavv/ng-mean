@@ -16,7 +16,8 @@ var _identityService: mts.IIdentityService,
     _q: ng.IQService,
     isAuthorizedStub: jasmine.Spy
     ;
- function goFrom(url) {
+    
+    function goFrom(url) {
         return {toState: function (state, params) {
             _location.replace().url(url); //Don't actually trigger a reload
             _state.go(state, params);
@@ -24,9 +25,10 @@ var _identityService: mts.IIdentityService,
         }};
     }
     function goTo(url) {
-  _location.url(url);
-  _rootScope.$digest();
-}
+    _location.url(url);
+    _rootScope.$digest();
+    }
+    
 describe('Testing app module', () => {
     isAuthorizedStub = jasmine.createSpy("isAuth");//.and.returnValue(_q.resolve("OK"))
    
@@ -43,7 +45,7 @@ describe('Testing app module', () => {
                 url: '/restrictedfake',
                 template: "<div></div>",
                 controller: () => { },
-                data: { authorized: true },
+                data: { authenticatedOnly: true },   
                 resolve: {
                     auth: isAuthorizedStub
                 }
@@ -52,7 +54,7 @@ describe('Testing app module', () => {
                 url: '/notauthonlyfake',
                 template: "<div></div>",
                 controller: () => { },
-                data: { authorized: false }
+                data: { authenticatedOnly: false },   
             })
         });
 
@@ -139,14 +141,7 @@ describe('Testing app module', () => {
         expect(_state.href("home")).toEqual('/');
     });
     describe("Router behaviour tests", () => {
-         it("!!!!!!!!!!!!!!!!!!!!!", () => {
-            //user goes from "/" to any restricted route
-            _identityService.user = null;
-            goFrom("/home").toState("restricted",{});
-            
-            expect(_identityService.isAuthenticated).toHaveBeenCalled();
-            expect(_state.current.name).toBe("signin");
-        })
+        
         it("Should redirect to singin when trying to get restricted route without authentication", () => {
             //user goes from "/" to any restricted route
             _identityService.user = null;
@@ -163,7 +158,7 @@ describe('Testing app module', () => {
             _rootScope.$apply();
             expect(_state.current.name).toBe("fake");
         })//ok
-        it("Should not redirect authenticated user trying get restricted page", () => {
+        it("Should not redirect authenticated user trying get restricted page", () => {           
             _state.go("home");
             _identityService.user = { id: "fakeid", roles: ["user"], token: "faketoken" }
             isAuthorizedStub.and.returnValue(_q.resolve(42));

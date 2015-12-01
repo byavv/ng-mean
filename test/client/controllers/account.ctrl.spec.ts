@@ -2,23 +2,23 @@
 /// <reference path="../../../typings/jasmine/jasmine.d.ts" />
 
 import module from "../../../client/app/components/components.module"
-import ctrl from "../../../client/app/components/user/user/profile.controller"
+import ctrl from "../../../client/app/components/user/user/account.controller"
 
 
 describe("Testing controllers", () => {
-    describe("Profile controller testing", () => {
+    describe("Account controller testing", () => {
         var mockScope,
             controller,
             usersService,
             _timeout: any,
             _q: ng.IQService,
-            _location: ng.ILocationService,
-            updateProfileStub: jasmine.Spy,
-            handleMessageStub: jasmine.Spy,
-            getProfileStub: jasmine.Spy,           
+            _location: ng.ILocationService,           
+            handleMessageStub: jasmine.Spy,            
+            getAccountStub: jasmine.Spy,
             changePasswordStub: jasmine.Spy,
             serverMessageHandler
             ;
+            
         beforeEach(() => {
             angular.mock.module("app")
             angular.mock.module(module.name);
@@ -27,15 +27,11 @@ describe("Testing controllers", () => {
                 _location = $injector.get<ng.ILocationService>('$location');
                 usersService = $injector.get<any>("usersService");
                 serverMessageHandler = $injector.get<any>("serverMessageHandler");
-                _timeout = $injector.get<any>("$timeout");
-                updateProfileStub = spyOn(usersService, "updateProfile");
-                updateProfileStub.and.returnValue(_q.when(42))
-                getProfileStub = spyOn(usersService, "getProfile");
-                getProfileStub.and.returnValue(_q.when(42));
-                updateProfileStub.and.returnValue(_q.when(42));
+                _timeout = $injector.get<any>("$timeout");               
               
+                getAccountStub = spyOn(usersService, "getAccount");
+                getAccountStub.and.returnValue(_q.when({account: "fake"}));
                 changePasswordStub = spyOn(usersService, "changePassword");
-
                 handleMessageStub = spyOn(serverMessageHandler, "handleMessage");
 
                 mockScope = $injector.get<ng.IRootScopeService>("$rootScope").$new();
@@ -44,41 +40,35 @@ describe("Testing controllers", () => {
                     usersService: usersService
                 });
                 controller.personalDataForm = {
-                    $dirty: true
+                    $dirty: true                    
                 }
             });
-        });
-        
-        
-         it("Should load profile data when redirect to page", () => {            
-            getProfileStub.and.returnValue(_q.when({profile: "fake"}));
+        });        
+
+         it("Should load account data when redirect to page", () => {            
+            getAccountStub.and.returnValue(_q.when({account: "fake"}));
             handleMessageStub.and.returnValue("handledError");
             spyOn(controller, "showAlert");   
             controller.init();          
             mockScope.$digest();
-            expect(getProfileStub).toHaveBeenCalled(); 
+            expect(getAccountStub).toHaveBeenCalled(); 
             _timeout.flush();
             _timeout.verifyNoPendingTasks();
-            expect(controller.profile).toEqual({profile: "fake"});                
+            expect(controller.account).toEqual({account: "fake"});                
             expect(handleMessageStub).not.toHaveBeenCalledWith("someError");
         });
         
-        it("Controller should call server to sign up user with username and password if form is valid", () => {
-            updateProfileStub.and.returnValue(_q.when(42));
-            var profile = { username: "John", password: "Doe" };
-            controller.profile = profile;
-            controller.submitPersonal();
-            expect(updateProfileStub).toHaveBeenCalledWith(profile);
-        });
-
-        it("Should get profile data if user opens profile accordion tab", () => {
-            var profilefromserver = { address: "NY", Birthday: "01/01/2001" };
-            getProfileStub.and.returnValue(_q.resolve(profilefromserver));
-            mockScope.vm = {}
-            mockScope.vm.isPersonalDataOpen = true;
+        it("Should handle server error and show alert", () => {
+            getAccountStub.and.returnValue(_q.reject("someError"));
+            handleMessageStub.and.returnValue("handledError");
+            spyOn(controller, "showAlert"); 
+            controller.init();          
             mockScope.$digest();
-            expect(getProfileStub).toHaveBeenCalled();
-        });
+            expect(getAccountStub).toHaveBeenCalled();
+            expect(controller.showAlert).toHaveBeenCalledWith("handledError", true);
+            expect(handleMessageStub).toHaveBeenCalledWith("someError");
+        });      
+
         it("Should show error message", () => {
             controller.error = null;
             controller.info = null;
@@ -86,35 +76,36 @@ describe("Testing controllers", () => {
             mockScope.$digest();
             expect(controller.error).toBe("myerror");
             expect(controller.info).toBeNull();
-        })
+        });
+        
         it("Should show info message", () => {
             controller.error = null;
             controller.showAlert("myinfo", false);
             mockScope.$digest();
             expect(controller.error).toBeNull();
             expect(controller.info).toBe("myinfo");
-        })
-
-        it("Should updateProfile when user 'personal-data' form is valid and reset form", () => {
-            controller.personalDataForm = {
+        });
+        
+        it("Should update user account data and change password if it is set", () => {
+            controller.changePasswordForm = {
                 $dirty: true,
+                $valid: true,
                 $setPristine: jasmine.createSpy("$setPristine").and.callFake(()=>{                   
-                    controller.personalDataForm.$dirty = false})
+                    controller.changePasswordForm.$dirty = false})
             }
-            var currentProfile = { username: "john" }
-            controller.profile = currentProfile;
+            var currentAccount = { username: "john", password: "doe" }
+            controller.account = currentAccount;
             spyOn(controller, "showAlert")           
-            updateProfileStub.and.returnValue(_q.when({ profile: { username: "john1" } }));
-            controller.submitPersonal();
+            changePasswordStub.and.returnValue(_q.when({ profile: { username: "john1" } }));
+            controller.submitPassword();
             mockScope.$digest();
-            expect(updateProfileStub).toHaveBeenCalledWith(currentProfile);
-            expect(controller.personalDataForm.$setPristine).toHaveBeenCalled();
-            expect(controller.personalDataForm.$dirty).toBeFalsy();
+            expect(changePasswordStub).toHaveBeenCalledWith(currentAccount);
+           
             _timeout.flush();
             _timeout.verifyNoPendingTasks();
-            expect(controller.showAlert).toHaveBeenCalled();
-            expect(controller.profile).toEqual({ username: "john1" });           
-        })
-       
+            expect(controller.changePasswordForm.$setPristine).toHaveBeenCalled();
+            expect(controller.changePasswordForm.$dirty).toBeFalsy();
+            expect(controller.showAlert).toHaveBeenCalled();              
+        })     
     });
 }); 
