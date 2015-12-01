@@ -16,8 +16,8 @@ module.exports = {
      */
     validateResetToken: function (req, res) {
         User.findOne({
-            "resetData.resetToken": req.params.token,
-            "resetData.resetExpires": {
+            "resetData.token": req.params.token,
+            "resetData.expires": {
                 $gt: Date.now()
             }
         }, (err, user) => {
@@ -25,9 +25,9 @@ module.exports = {
                 return res.status(500).send();
             };
             if (user) {
-                return res.redirect('/password/reset/' + req.params.token);
+                return res.redirect(`/password/reset/${req.params.token}`);
             } else {
-                return res.redirect('/password/error/');
+                return res.redirect('/password/error');
             }
         });
     },
@@ -126,7 +126,7 @@ module.exports = {
                     return res.status(400).send({ key: 'error_user_found' });
                 }
                 _.extend(user.profile, req.body.profile);
-                user.save(function (err) {
+                user.save((err) => {
                     if (err) return next(err);
                     return res.status(200).json({ key: "info_profile_updated_success", profile: user.profile });
                 })
@@ -154,8 +154,10 @@ module.exports = {
                         if (!user) {
                             return res.status(400).send({ key: 'error_user_found' });
                         }
-                        user.resetData.resetToken = token;
-                        user.resetData.resetExpires = Date.now() + 3600000;
+                        user.resetData = {
+                            token: token,
+                            expires: Date.now() + 3600000
+                        };
                         user.save((err) => {
                             done(err, token, user);
                         });
@@ -200,7 +202,7 @@ module.exports = {
         var newPassword = req.body.password;
         var token = req.body.token;
         if (newPassword && token) {
-            User.findOne({ "resetData.resetToken": token }, (err, user) => {
+            User.findOne({ "resetData.token": token }, (err, user) => {
                 if (!err && user) {
                     user.password = newPassword;
                     user.resetData = undefined;

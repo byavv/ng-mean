@@ -6,7 +6,7 @@ module.exports = {
 		callbackURL: '/auth/github/callback'
 	},
 	jwtAuth: {
-		access_expiration_time: 3600,
+		access_expiration_time: 360,
 		refresh_expiration_time: 360000,
 		secret: "my super secret word"
 	},
