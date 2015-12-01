@@ -12,7 +12,7 @@ export default class IdentityService implements mts.IIdentityService {
     /**
      *  Update user authentication state.
      *  Called when bootstrap and when gets notified of successful external authentication
-     *  (GitHub in this case).
+     *  (GitHub in this case). Need to start digest, because angular doesn't track changes in localStorage
      */
     public update(startDigest:boolean):void {
         startDigest ?
@@ -48,8 +48,8 @@ export default class IdentityService implements mts.IIdentityService {
      * Check if user is authorized.
      * Note!
      * Your server have to be the final point for security. This method exist only to notify client app about
-     * changing authentication state. If token expired, client-side know nothing about it, so to be sure that
-     * user is authenticated, use isAuthenticated method of authService which require server using current token.
+     * changing authentication state. If token is expired, client-side know nothing about it, so to be sure that 
+     * the user is authenticated, use authService isAuthorized which require server using current token.
      */
     public isAuthorized(roles:Array<string>):boolean {
         return !!(this.isAuthenticated() && _.intersection(this._user.roles, roles).length === roles.length);

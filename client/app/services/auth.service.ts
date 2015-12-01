@@ -41,8 +41,9 @@ export default class AuthService implements mts.IAuthService {
     }
     /**
      * Check if user authorized for roles. Used to protect app routes. If route access is restricted,
-     * the method will be called with current token. If token is valid and a user authorized for routes
-     * http interceptor pass this request, in other case - send to login page.
+     * this method will be called with current token. If token is valid and the user is authorized for routes
+     * http interceptor pass this request, in other case - fire 401, which, in turn, will be handled in 
+     * $stateChangeError callback.
      */
     public isAuthorized(roles: Array<string>): ng.IPromise<any> {
         return this.$http.post("/auth/me", { require: roles });
