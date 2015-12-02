@@ -29,8 +29,7 @@
   "devDependencies": {
     "angular-mocks": "^1.4.8",
     "chai": "^3.4.1",
-    "chai-as-promised": "^5.1.0",
-    "chalk": "^1.1.1",
+    "chai-as-promised": "^5.1.0",   
     "coveralls": "^2.11.4",
     "gulp-angular-protractor": "0.0.6",
     "gulp-coveralls": "^0.1.4",
@@ -77,6 +76,7 @@
     "body-parser": "^1.14.1",
     "bower": "^1.6.8",
     "bower-webpack-plugin": "^0.1.9",
+    "chalk": "^1.1.1",
     "cookie-parser": "^1.4.0",
     "css-loader": "^0.23.0",
     "file-loader": "^0.8.5",
