@@ -104,7 +104,7 @@ describe("User api controller tests", () => {
 				.end((err, res) => {
 					expect(res.status).to.be.equal(302);
 					expect(findOneStub.called).to.be.equal(true);
-					expect(res.header['location']).to.be.equal("/password/error/");
+					expect(res.header['location']).to.be.equal("/password/error");
 					done();
 				});
 		})
