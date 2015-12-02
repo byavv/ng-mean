@@ -3,28 +3,27 @@
 var _ = require('lodash'),
   gulp = require('gulp'),
   $ = require('gulp-load-plugins')(),
-  runSequence = require('run-sequence'),
   webpack = require("webpack"),
   path = require('path')
   ;
 
-
 gulp.task("set_test", () => {
   process.env.NODE_ENV = 'test';
 })
+
+// test on Travis-CI (mocha exit when done)
 gulp.task('mocha-on-travis', ["set_test"], () => {
   var mochaError;
-  var handleMochaError = (err) => {
-    console.log('Mocha encountered an error, exiting with status 1');
-    console.log('Error:', err.message);
-    process.exit(1);
-  };
   gulp.src(['test/server/**/*.spec.js'], { read: false })
     .pipe($.mocha({
       reporter: 'spec'
     }))
     .on('end', () => {
-      if (mochaError) return handleMochaError(mochaError);
+      if (mochaError) {
+        console.log('Mocha encountered an error, exiting with status 1');
+        console.log('Error:', mochaError.message);
+        process.exit(1);
+      }
       process.exit();
     })
     .on('error', (err) => {
@@ -34,6 +33,7 @@ gulp.task('mocha-on-travis', ["set_test"], () => {
     });
 });
 
+// start server tests (single)
 gulp.task('mocha', ["set_test"], () => {
   gulp.src(['test/server/**/*.spec.js'], { read: false })
     .pipe($.mocha({
@@ -48,22 +48,22 @@ gulp.task('mocha', ["set_test"], () => {
     });
 });
 
-
+// start server tests (auto)
 gulp.task("watch-mocha", ["set_test"], () => {
   gulp.run("mocha");
   gulp.watch(["server/**/*.js", "test/**/*.js"], ["mocha"]);
 })
 
-//start tests (single)
+// start client tests (single)
 gulp.task("karma", (done) => {
   startClientTests(true, done);
 });
 
-//start tests (auto)
+// start client tests (auto)
 gulp.task("watch-karma", (done) => {
   startClientTests(false, done);
 });
-
+// protractor tests
 gulp.task('protractor', () => {
   gulp.src([])
     .pipe($.angularProtractor({
@@ -94,7 +94,6 @@ gulp.task("images", () => {
 });
 
 gulp.task('coverage', [], function () {
-  //http://stackoverflow.com/questions/25434794/gulp-coveralls-returns-422-no-travisci-builds-can-be-found
   return gulp
     .src('./coverage/**/lcov.info')
     .pipe($.coveralls());
@@ -103,7 +102,7 @@ gulp.task('coverage', [], function () {
 // dev task
 gulp.task('default', ["images"], function () {
   // livereload Chrome extension 
-  // https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei
+  // extension: https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei
   $.livereload.listen();
   $.nodemon().on('restart', function () {
     gulp.src('server/server.js')
