@@ -79,7 +79,6 @@ module.exports = function (mode) {
             webpackConfig.plugins.push(new webpack.optimize.CommonsChunkPlugin("vendors", "vendors.js", Infinity));
             webpackConfig.plugins.push(
                 new NgminPlugin(),
-
                 new webpack.optimize.UglifyJsPlugin({
                     mangle: false,
                     compress: {
