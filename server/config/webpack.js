@@ -2,7 +2,7 @@ var path = require('path'),
     webpack = require('webpack'),
     SaveHashes = require('assets-webpack-plugin'),
     BowerWebpackPlugin = require("bower-webpack-plugin"),
-    NgAnnotatePlugin = require("ng-annotate-webpack-plugin");
+    NgminPlugin = require("ngmin-webpack-plugin");
 
 module.exports = function (mode) {
     var webpackConfig = {
@@ -10,9 +10,9 @@ module.exports = function (mode) {
             main: ['./client/app/app.module.ts'],
             vendors: ['angular', 'lodash', "jquery", "bootstrap"]
         },
-        output: {           
+        output: {
             path: path.join(__dirname, './build'),
-            filename: '[name].js',            
+            filename: '[name].js',
             publicPath: '/build/',
             pathinfo: false
         },
@@ -20,9 +20,9 @@ module.exports = function (mode) {
             path.join("node_modules", '/angular'),
             path.join("node_modules", '/angular-route'),
             path.join("node_modules", '/angular-mocks'),
-            path.join("node_modules", '/lodash'), 
+            path.join("node_modules", '/lodash'),
             path.join("node_modules", '/angular-animate'),
-            path.join("node_modules", '/angular-messages')            
+            path.join("node_modules", '/angular-messages')
         ],
         module: {
             loaders: [
@@ -31,11 +31,11 @@ module.exports = function (mode) {
                 { test: /\.less$/, loader: "style!css!less" },
                 { test: /\.scss$/, loader: "style!css!sass" },
                 { test: /\.(png|jpg)$/, loader: "url?limit=25000" },
-                { test: /\.jpe?g$|\.gif$|\.png$|\.wav$|\.mp3$|\.otf$/, loader: "file"},
+                { test: /\.jpe?g$|\.gif$|\.png$|\.wav$|\.mp3$|\.otf$/, loader: "file" },
                 { test: /\.(ttf|eot|svg|woff|woff2)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file" },
-                { test: /\.ts$/, loader: 'ts'}
+                { test: /\.ts$/, loader: 'ts' }
             ],
-            postLoaders: [] 
+            postLoaders: []
         },
         resolve: {
             extensions: ["", ".ts", ".js", ".less", ".sass"],
@@ -78,22 +78,23 @@ module.exports = function (mode) {
         case "production":
             webpackConfig.plugins.push(new webpack.optimize.CommonsChunkPlugin("vendors", "vendors.js", Infinity));
             webpackConfig.plugins.push(
+                new NgminPlugin(),
+
                 new webpack.optimize.UglifyJsPlugin({
+                    mangle: false,
                     compress: {
                         warnings: false
                     }
-                }), new NgAnnotatePlugin({
-                    add: true
                 }));
             webpackConfig.debug = false;
-            webpackConfig.devtool = "hidden";
+            webpackConfig.devtool = "false";
             break;
         case "development":
             webpackConfig.debug = true;
             webpackConfig.devtool = "source-map";
             webpackConfig.plugins.push(
-				new webpack.optimize.CommonsChunkPlugin("vendors", "vendors.js", Infinity),
-				new webpack.HotModuleReplacementPlugin());
+                new webpack.optimize.CommonsChunkPlugin("vendors", "vendors.js", Infinity),
+                new webpack.HotModuleReplacementPlugin());
             break;
     }
     return webpackConfig;
