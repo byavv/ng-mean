@@ -9,7 +9,7 @@ module.exports = {
      * User registration
      * middleware for POST route: /auth/signup
      */
-    signup: function (req, res, next) {
+    signup: function (req, res) {
         var user = new User(req.body);
         user.authProvider = "local";
         try {
@@ -106,7 +106,7 @@ module.exports = {
                         error: err
                     });
                 }
-                tokenHelper.create(user, function (err, result) {
+                tokenHelper.create(user, (err, result) => {
                     if (err) {
                         return res.redirect(redirectURL || '/');
                     }
