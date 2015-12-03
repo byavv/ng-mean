@@ -8,8 +8,7 @@
     "test": "gulp mocha",
     "start": "node server/server.js",
     "postinstall": "bower install && gulp build",
-    "dev": "gulp",
-    "coverage": "istanbul cover './node_modules/mocha/bin/_mocha' -- --ui bdd -R spec -t 5000"
+    "dev": "gulp"    
   },
   "engines": {
     "node": "4.1.x",
@@ -30,8 +29,7 @@
     "angular-mocks": "^1.4.8",
     "chai": "^3.4.1",
     "chai-as-promised": "^5.1.0",
-    "coveralls": "^2.11.4",
-    "del": "^2.1.0",
+    "coveralls": "^2.11.4",    
     "gulp-angular-protractor": "0.0.6",
     "gulp-coveralls": "^0.1.4",
     "gulp-istanbul": "^0.10.3",
@@ -119,16 +117,5 @@
     "ts-loader": "^0.7.1",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.6"
-  },
-  "config": {
-    "blanket": {
-      "pattern": [
-        ""
-      ],
-      "data-cover-never": [
-        "node_modules",
-        "test"
-      ]
-    }
   }
 }
