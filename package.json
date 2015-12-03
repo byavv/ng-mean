@@ -9,7 +9,7 @@
     "start": "node server/server.js",
     "postinstall": "bower install && gulp build",
     "dev": "gulp",
-    "update-webdriver": "webdriver-manager update"
+    "coverage": "istanbul cover './node_modules/mocha/bin/_mocha' -- --ui bdd -R spec -t 5000"
   },
   "engines": {
     "node": "4.1.x",
@@ -29,8 +29,9 @@
   "devDependencies": {
     "angular-mocks": "^1.4.8",
     "chai": "^3.4.1",
-    "chai-as-promised": "^5.1.0",   
+    "chai-as-promised": "^5.1.0",
     "coveralls": "^2.11.4",
+    "del": "^2.1.0",
     "gulp-angular-protractor": "0.0.6",
     "gulp-coveralls": "^0.1.4",
     "gulp-istanbul": "^0.10.3",
@@ -52,7 +53,7 @@
     "karma-webpack": "^1.7.0",
     "mocha": "^2.3.4",
     "mocha-lcov-reporter": "^1.0.0",
-    "moment": "^2.10.6",    
+    "moment": "^2.10.6",
     "node-sass": "^3.4.2",
     "phantomjs": "^1.9.19",
     "phantomjs-polyfill": "0.0.1",
