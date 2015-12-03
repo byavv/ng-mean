@@ -11,15 +11,16 @@ module.exports = {
      */
     signup: function (req, res, next) {
         var user = new User(req.body);
-        user.provider = "local";
+        user.authProvider = "local";
         try {
             user.save((err) => {
                 if (err) {
                     var validationErrList = [];
                     if (err.name === "ValidationError" && err.errors) {
-                        validationErrList = _.values(err.errors).map((validationError) => {
-                            return validationError.message;
-                        });
+                        validationErrList = _.values(err.errors)
+                            .map((validationError) => {
+                                return validationError.message;
+                            });
                         return res.status(400).send({
                             key: "error_validation",
                             message: validationErrList
@@ -116,4 +117,4 @@ module.exports = {
             })(req, res, next);
         };
     }
-}
+} 
