@@ -23,7 +23,8 @@ module.exports = {
         var clientData = {
             id: user._id,
             username: user.username,
-            token: token
+            token: token,
+            roles: user.roles
         };
        
         // set to redis
