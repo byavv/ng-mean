@@ -9,6 +9,7 @@ export default class AccountController {
     private changePasswordForm: ng.IFormController;
     private info: any;
     private error: any;
+    private showAccountForm: boolean = true;
 
 
     constructor(private usersService: mts.IUsersService,
@@ -22,6 +23,9 @@ export default class AccountController {
             this.loading = true;
             this.usersService.getAccount().then((res: any) => {
                 if (res) {
+                    if (angular.equals(res.provider, "github")) {
+                        this.showAccountForm = false;                        
+                    }
                     this.account = res;
                     this.loading = false;
                 }

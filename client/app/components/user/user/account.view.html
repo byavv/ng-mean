@@ -10,7 +10,7 @@
 		{{vm.info}}
 	</alert>
 	<div class="row">
-		<form ng-submit="vm.submitPassword()" name="vm.changePasswordForm" novalidate role="form">
+		<form ng-show="vm.showAccountForm" ng-submit="vm.submitPassword()" name="vm.changePasswordForm" novalidate role="form">
 			<div class="form-group" ng-class="{'has-error' : vm.changePasswordForm.username.$invalid && vm.changePasswordForm.$submitted}">
 				<label class="control-label" for="username">*User name</label>
 				<input type="text" class="form-control" id="username" name="username" placeholder="username" required ng-model="vm.account.username">
@@ -47,5 +47,13 @@
 			<button type="submit" class="btn btn-primary">Change</button>
 		</form>
 	</div>	
+	<div class="row" ng-show="!vm.showAccountForm">
+		 <div class="col-md-12 text-center content">
+        <a ng-href="{{vm.account.profileUrl}}" class="btn btn-default github-button" ng-class="{{vm.account.provider}}-button" target="_blank">
+            <i class="fa fa-github"></i>
+            GITHUB
+        </a>
+    </div>
+	</div>
 </div>
 <loader ng-if="vm.loading"></loader>
