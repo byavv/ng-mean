@@ -65,7 +65,7 @@ module.exports = {
                 }
             })
         } else {
-            return res.status(500).send({ key: "error_500" });
+            return res.status(400).send({ key: 'error_notValidCredentials' });
         }
     },
     /**
