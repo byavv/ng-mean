@@ -79,11 +79,11 @@ describe("User authentication controller unit tests", () => {
 			request(app)
 				.post('/signin')
 				.send(user_to_signin)
-				.expect(500)
+				.expect(400)
 				.end((err, res) => {
-					expect(res.status).to.be.equal(500);
+					expect(res.status).to.be.equal(400);
 					expect(res.body).to.have.property('key');
-					expect(res.body.key).to.be.equal("error_500");
+					expect(res.body.key).to.be.equal("error_notValidCredentials");
 					done();
 				});
 		})

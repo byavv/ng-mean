@@ -9,17 +9,18 @@ module.exports = {
      * User registration
      * middleware for POST route: /auth/signup
      */
-    signup: function (req, res, next) {
+    signup: function (req, res) {
         var user = new User(req.body);
-        user.provider = "local";
+        user.authProvider = "local";
         try {
             user.save((err) => {
                 if (err) {
                     var validationErrList = [];
                     if (err.name === "ValidationError" && err.errors) {
-                        validationErrList = _.values(err.errors).map((validationError) => {
-                            return validationError.message;
-                        });
+                        validationErrList = _.values(err.errors)
+                            .map((validationError) => {
+                                return validationError.message;
+                            });
                         return res.status(400).send({
                             key: "error_validation",
                             message: validationErrList
@@ -64,7 +65,7 @@ module.exports = {
                 }
             })
         } else {
-            return res.status(500).send({ key: "error_500" });
+            return res.status(400).send({ key: 'error_notValidCredentials' });
         }
     },
     /**
@@ -105,7 +106,7 @@ module.exports = {
                         error: err
                     });
                 }
-                tokenHelper.create(user, function (err, result) {
+                tokenHelper.create(user, (err, result) => {
                     if (err) {
                         return res.redirect(redirectURL || '/');
                     }
@@ -116,4 +117,4 @@ module.exports = {
             })(req, res, next);
         };
     }
-}
+} 

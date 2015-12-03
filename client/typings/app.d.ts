@@ -55,11 +55,10 @@ declare module meanTs {
         isAuthenticated(): boolean;
         isAuthorized(roles: Array<string>): boolean;
     }
-    export interface IUser {
-        username: string;
-        email: string;
-        token: string;
+    export interface IUser {        
+        username: string;             
         roles: [string];
+        token?: string; 
     }
     export interface IError {
         key: any,

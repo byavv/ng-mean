@@ -43,11 +43,17 @@ module.exports = {
             if (!user) {
                 return res.status(400).send();
             } else {
-                var account = {
-                    username: user.username,
-                    email: user.email,
-                    provider: user.provider
-                };
+                var account = {};
+                user.authProvider !== 'local' && !!user.extOAuth
+                    ? Object.assign(account, {
+                        provider: user.authProvider,
+                        profileUrl: user.extOAuth.providerData.profileUrl
+                    })
+                    : Object.assign(account, {
+                        username: user.username,
+                        email: user.email,
+                        provider: user.authProvider
+                    });
                 return res.status(200).json(account);
             }
         });
@@ -87,7 +93,6 @@ module.exports = {
                             } else {
                                 return res.status(500).send({ key: "error_500" });
                             }
-
                         } else {
                             return res.status(200).send({ key: "info_password_changed_success" });
                         }
@@ -95,7 +100,9 @@ module.exports = {
                 } else {
                     return res.status(400).send({ key: "error_old_password_is_not_valid" });
                 }
-            })
+            });
+        } else {
+            return res.status(400).send();
         }
     },
     /**
@@ -116,7 +123,7 @@ module.exports = {
     },
     /**
 	 * Change user profile data
-	 * */
+	 */
     updateProfile: function (req, res, next) {
         var userId = req.user.id;
         if (userId && req.body.profile) {
@@ -131,6 +138,8 @@ module.exports = {
                     return res.status(200).json({ key: "info_profile_updated_success", profile: user.profile });
                 })
             })
+        } else {
+            return res.status(400).send();
         }
     },
     /**
@@ -140,7 +149,7 @@ module.exports = {
         async.waterfall([
             // generate random reset token
             (done) => {
-                crypto.randomBytes(20, function (err, buffer) {
+                crypto.randomBytes(20, (err, buffer) => {
                     var token = buffer.toString('hex');
                     done(err, token);
                 });
@@ -181,7 +190,7 @@ module.exports = {
                 mailHelper.sendResetMail(
                     user.email,                 // to
                     nconf.get("mailer").from,   // from
-                    emailContent,                  // what
+                    emailContent,               // what
                     nconf.get("mailer").options,// options
                     (err) => {
                         if (!err)

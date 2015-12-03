@@ -12,7 +12,9 @@ before_script:
 script:
   - gulp karma
   - gulp mocha-on-travis
- 
+
+notifications:  
+  email: false
 
 services: 
   - mongodb

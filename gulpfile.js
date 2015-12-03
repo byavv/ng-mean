@@ -33,7 +33,36 @@ gulp.task('mocha-on-travis', ["set_test"], () => {
     });
 });
 
-// start server tests (single)
+// server coverage
+gulp.task('istanbul', ["set_test"], () => {
+  var mochaError;
+  gulp.src(['./server/**/*.js'])
+    .pipe($.istanbul({ includeUntested: false }))
+    .pipe($.istanbul.hookRequire())
+    .on('finish', () => {
+
+      gulp.src(['./test/server/**/*.spec.js'])
+        .pipe($.mocha())
+        .on('error', (err) => {
+          $.util.log($.util.colors.bgRed('ERROR:'), $.util.colors.red(err.message));
+          $.util.log('Stack:', $.util.colors.red(err.stack));
+          mochaError = err;
+        })
+        .pipe($.istanbul.writeReports({
+          // reporters: ['lcov']
+        }))
+        .on('end', () => {
+          if (mochaError) {
+            console.log('Mocha encountered an error, exiting with status 1');
+            console.log('Error:', mochaError.message);
+            process.exit(1);
+          }
+          process.exit();
+        });
+    });
+});
+
+// test server (single)
 gulp.task('mocha', ["set_test"], () => {
   gulp.src(['test/server/**/*.spec.js'], { read: false })
     .pipe($.mocha({
@@ -48,22 +77,22 @@ gulp.task('mocha', ["set_test"], () => {
     });
 });
 
-// start server tests (auto)
+// test server (auto)
 gulp.task("watch-mocha", ["set_test"], () => {
   gulp.run("mocha");
   gulp.watch(["server/**/*.js", "test/**/*.js"], ["mocha"]);
 })
 
-// start client tests (single)
+// test client (single)
 gulp.task("karma", (done) => {
   startClientTests(true, done);
 });
 
-// start client tests (auto)
+// test client (auto)
 gulp.task("watch-karma", (done) => {
   startClientTests(false, done);
 });
-// protractor tests
+// e2e protractor
 gulp.task('protractor', () => {
   gulp.src([])
     .pipe($.angularProtractor({
@@ -78,33 +107,37 @@ gulp.task('protractor', () => {
     .on('end', () => { });
 });
 
-//build for production
-gulp.task("build", ["images"], () => {
-  var wpConfig = require("./server/config/webpack")("production");
-  return gulp.src(__dirname + '/client/app/app.module.ts')
-    .pipe($.webpack(wpConfig, webpack))
-    .pipe(gulp.dest('./build/'));
+gulp.task('clean:build', () => {
+  return (require('del'))('./build');
 });
-gulp.task("images", () => {
+gulp.task("images", ["clean:build"], () => {
   return gulp.src("client/assets/images/*")
     .pipe($.imagemin({
       optimizationLevel: 4
     }))
     .pipe(gulp.dest("build/images"));
 });
+// build for production
+gulp.task("build", ["images"], () => {
+  var wpConfig = require("./server/config/webpack")("production");
+  return gulp.src(__dirname + '/client/app/app.module.ts')
+    .pipe($.webpack(wpConfig, webpack))
+    .pipe(gulp.dest('./build/'));
+});
 
-gulp.task('coverage', [], function () {
+// coveralls
+gulp.task('coverage', [], () => {
   return gulp
     .src('./coverage/**/lcov.info')
     .pipe($.coveralls());
 })
 
 // dev task
-gulp.task('default', ["images"], function () {
+gulp.task('default', ["images"], () => {
   // livereload Chrome extension 
   // extension: https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei
   $.livereload.listen();
-  $.nodemon().on('restart', function () {
+  $.nodemon().on('restart', () => {
     gulp.src('server/server.js')
       .pipe($.livereload())
       .pipe($.notify('Reloading page, please wait...'));

@@ -11,7 +11,8 @@
     "/.idea/*.*",
     "/test/*.*",
     "gulpfile.js",
-    "*.json"
+    "*.json",
+    "/coverage"
   ],
   "verbose": true,
   "execMap": {
