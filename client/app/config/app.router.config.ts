@@ -71,18 +71,7 @@ export function routeConfig($stateProvider: ng.ui.IStateProvider, $urlRouterProv
             resolve: {
                 auth: isAuthorizedForRoles(["user"])
             }
-        })
-        /*.state("profile", {
-            url: "/profile",
-            controller: "profileCtrl",
-            controllerAs: "vm",
-            templateUrl: "profile.view.html",
-            data: { authenticatedOnly: true },
-            resolve: {
-                auth: isAuthorizedForRoles(["user"])
-            }
-        });*/
-        
+        })  
         .state("user", {
             abstract: true,
             url: "/user",

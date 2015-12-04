@@ -1,18 +1,17 @@
 var jwt = require("jsonwebtoken"),
     nconf = require("nconf"),
-    client = require("../config/redis");
+    client = require("../config/redis")
+    ;   
     
-
- 
 module.exports = {
     /**
-    *  Create new token from user profile and add it to storage
-    */
+     *  Create new token from user profile and add it to storage
+     */
     create: function (user, done) {
         var token = jwt.sign({
             id: user._id,
             roles: user.roles
-            //add claims you need
+            // add claims you need
         }, nconf.get("jwtAuth").secret, {
                 issuer: "https://my.server.issued.token.url.com",
                 subject: user.username,
@@ -20,23 +19,18 @@ module.exports = {
                 expiresIn: nconf.get("jwtAuth").access_expiration_time
             });
         // data to be send to client
-        var clientData = {
-            id: user._id,
-            username: user.username,
-            token: token,
-            roles: user.roles
-        };
-       
+        var clientData = {                    
+            token: token           
+        };       
         // set to redis
         client.setex([user._id, nconf.get("jwtAuth").access_expiration_time, token], (err) => {
             return done(err, clientData);
         });
-    },
+    },    
     /**
-    * Revoke token deleting it from storage
-    */
-    revoke: function (payload, done) {
-      
+     * Revoke token deleting it from storage
+     */
+    revoke: function (payload, done) {      
         client.expire(payload.id, 0, (err, reply) => {
             if (err) {
                 return done(err);
@@ -45,8 +39,8 @@ module.exports = {
         });
     },
     /**
-    * express-jwt isRevoked check * 
-    */
+     * Express-jwt isRevoked check
+     */
     isRevoked: function (req, payload, next) {  
         client.get(payload.id, (err, token) => {
             if (err) {

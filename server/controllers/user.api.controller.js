@@ -127,16 +127,11 @@ module.exports = {
     updateProfile: function (req, res, next) {
         var userId = req.user.id;
         if (userId && req.body.profile) {
-            User.findOne({ _id: userId }, function (err, user) {
-                if (err) return next(err);
-                if (!user) {
-                    return res.status(400).send({ key: 'error_user_found' });
-                }
-                _.extend(user.profile, req.body.profile);
-                user.save((err) => {
-                    if (err) return next(err);
-                    return res.status(200).json({ key: "info_profile_updated_success", profile: user.profile });
-                })
+            User.update({ _id: userId }, { $set: { profile: req.body.profile } }, {}, (err, user) => {
+                if (err) return res.status(500).send({ key: "error_500" });
+                if (!user) return res.status(400).send({ key: 'error_user_found' });
+                return res.status(200)
+                    .json({ key: "info_profile_updated_success", profile: req.body.profile });
             })
         } else {
             return res.status(400).send();
