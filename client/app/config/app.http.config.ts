@@ -1,7 +1,9 @@
 export function httpInterceptor($q: ng.IQService,
     identityService: mts.IIdentityService,
     localStorageService: angular.local.storage.ILocalStorageService,
-    $location: ng.ILocationService): ng.IHttpInterceptor {
+    $location: ng.ILocationService, toastr: any): ng.IHttpInterceptor {
+    toastr.options.closeButton = true;
+    toastr.options.positionClass = "toast-top-full-width";
     return {
         request: (config: ng.IRequestConfig): ng.IRequestConfig => {
             config.headers = config.headers || {};
@@ -13,41 +15,23 @@ export function httpInterceptor($q: ng.IQService,
             }
             return config;
         },
-        response: (response: ng.IHttpPromiseCallbackArg<any>): ng.IHttpPromiseCallbackArg<any> => {
-            /*let refreshToken = response.headers("refreshToken");
-            if (!!refreshToken) {
-                identityService.refreshToken(refreshToken);
-            }*/
-            return response;
-        },
-        requestError: (rejection: any): ng.IPromise<any> => {
-            //the connection was closed
-            //if (rejection.status === 0) {
-            // todo: show user about error, may be using popup window
-            // smth like check your connection error on top of page
-            //    return;
-            //}
-            return $q.reject(rejection);
-        },
         responseError: (rejection: any): ng.IPromise<any> => {
-            /*let refreshToken = rejection.headers("refreshToken");
-            if (!!refreshToken) {
-                identityService.refreshToken(refreshToken);
-            }*/
-
+            if (rejection.status == -1) {
+                toastr.error("Unexpected error, server is not responding, check your connection and try again");
+            }
             if (!!rejection && rejection.status === 401) {
-                identityService.user = null;               
+                identityService.user = null;
                 $location.path("/signin");
             }
             if (!!rejection && rejection.status === 500) {
-                // todo: show user about error, may be using popup window
-                // smth like unexpected server error on top of page
+                toastr.error("Unexpected server error");
+                console.error(rejection);
             }
             return $q.reject(rejection);
         }
     };
 }
-httpInterceptor.$inject = ["$q", "identityService", "localStorageService", "$location"];
+httpInterceptor.$inject = ["$q", "identityService", "localStorageService", "$location", "toastr"];
 
 export function httpConfig($httpProvider: ng.IHttpProvider): any {
     $httpProvider.interceptors.push(httpInterceptor);

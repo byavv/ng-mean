@@ -7,6 +7,7 @@ export function run($rootScope: ng.IRootScopeService,
             $state.go("signin");
         }
     });
+    
     //check route data and if it's protected, check user autho
     $rootScope.$on("$stateChangeStart", (event: any, toState: ng.ui.IState, toParams, fromState: ng.ui.IState, fromParams): void => {
         if (toState.data && toState.data.authenticatedOnly !== undefined) {

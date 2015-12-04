@@ -7,6 +7,8 @@ require("jquery");
 require("bootstrap");
 // fonts
 require("font-awesome");
+
+require("toastr");
 // bootstrap theme
 //require("../assets/bootstrap-readable-theme.css");
 //require("../assets/bootstrap-paper-theme.css");
@@ -49,6 +51,7 @@ export default angular.module("app", [
     .config(httpConfig)
     .config(logConfig)
     .run(run)
+    .value('toastr', require("toastr"))
     .value("config", require("../../shared/index"));
 
 if (_DEV_MODE) {
