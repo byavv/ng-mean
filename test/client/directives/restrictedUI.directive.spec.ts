@@ -24,7 +24,6 @@ describe("Testing Directives", () => {
                 _compile = $compile;
                 _rootScope = $rootScope;
                 _identityService = $injector.get<mts.IIdentityService>("identityService");
-
             });
         })
 
@@ -54,38 +53,10 @@ describe("Testing Directives", () => {
             expect(_compiledElement.hasClass('hidden')).toBeTruthy();
 
         });
-        it("Should show element when user authorized for roles", () => {
-            _identityService.user = { id: "123456", token: "faketoken", roles: ["user"] };
+        it("Should show element when user authorized", () => {
+            _identityService.user = { token: "faketoken" };
             _scope.$digest();
             expect(_compiledElement.hasClass('hidden')).toBeFalsy();
-
-        });
-        it("Should hide if user has not enouph rights", () => {
-            _compiledElement = createElement(
-                `<div restrict-ui permit-for="user, admin">
-                </div>`,
-                _scope);
-            _identityService.user = { id: "123456", token: "faketoken", roles: ["user"] };
-            _scope.$digest();
-            expect(_compiledElement.hasClass('hidden')).toBeTruthy();
-        });
-        it("Should hide if permit-for is null", () => {
-            _compiledElement = createElement(
-                `<div restrict-ui>
-                </div>`,
-                _scope);
-            _identityService.user = { id: "123456", token: "faketoken", roles: ["user"] };
-            _scope.$digest();
-            expect(_compiledElement.hasClass('hidden')).toBeTruthy();
-        });
-        it("Should hide if roles param is wrong", () => {
-            _compiledElement = createElement(
-                `<div restrict-ui permit-for="user1">
-                </div>`,
-                _scope);
-            _identityService.user = { id: "123456", token: "faketoken", roles: ["user"] };
-            _scope.$digest();
-            expect(_compiledElement.hasClass('hidden')).toBeTruthy();
         });
     });
 });
