@@ -35,7 +35,7 @@ export default class AuthService implements mts.IAuthService {
     }
 
     public signOut(): ng.IPromise<any> {
-        return this.$http.post("/auth/signout", { logout: true }).then((): void => {
+        return this.$http.post("/auth/signout", { logout: true }).finally((): void => {
             this.identityService.user = null;
         });
     }
